@@ -13,7 +13,6 @@
         <h1>TagOrder</h1>
     </header>
     <main id="main-content">
-        <h1>테이블 목록</h1>
         <% orders.forEach(order => { %>
         <!--data-table은 손님쪽에서 id를 구현 후 제작해야해-->
         <div class="table-card" data-table="1">
@@ -21,7 +20,7 @@
             <ul>
                 <li>
                     <h2>메뉴: <%= order.menu %></h2>
-                    <p>옵션: <%= order.options.join(', ') %></p>
+                    <p>옵션: <%= order.options.map(option => option.name).join(', ') %></p>
                 </li>
             </ul>
             <label><input type="checkbox" class="table-check"> 정산 대상 선택</label>

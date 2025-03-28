@@ -122,15 +122,17 @@
     function DoSendOrder(name) {
         const selectedOptions = [];
         document.querySelectorAll('#modal-options input[type="checkbox"]:checked').forEach(checkbox => {
-            selectedOptions.push(checkbox.id.replace('option-', ''));
-        });
+                const optionId = checkbox.id.replace('option-', ''); // ID 추출
+                const optionName = checkbox.parentElement.textContent.trim(); // 이름 추출
+                selectedOptions.push({ id: optionId, name: optionName });
+            });
             fetch('/DoSendOrder', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json' //HTTP의 요청이 JSON형식임을 알리는 헤더
                 },
 
-                body: JSON.stringify({ menu: selectedMenu, options: selectedOptions })
+                body: JSON.stringify({ menu: selectedMenu, options: selectedOptions})
             })
             .then(response => response.json())
             .then(data => {
@@ -146,6 +148,8 @@
                 alert('주문에 실패했습니다.');
             });
         }
+
+
 </script>
 </body>
 </html>
