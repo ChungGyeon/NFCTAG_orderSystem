@@ -14,45 +14,25 @@
     </header>
     <main id="main-content">
         <h1>테이블 목록</h1>
-        <div class="table-card" data-table="1" data-total="22000">
+        <% orders.forEach(order => { %>
+        <!--data-table은 손님쪽에서 id를 구현 후 제작해야해-->
+        <div class="table-card" data-table="1">
             <h3>테이블 1</h3>
             <ul>
-                <% orders.forEach(order => { %>
-                   <li>
-                       <h2>메뉴: <%= order.menu %></h2>
-                       <p>옵션: <%= order.options.join(', ') %></p>
-                   </li>
-                <% }) %>
+                <li>
+                    <h2>메뉴: <%= order.menu %></h2>
+                    <p>옵션: <%= order.options.join(', ') %></p>
+                </li>
             </ul>
             <label><input type="checkbox" class="table-check"> 정산 대상 선택</label>
         </div>
-
-        <div class="table-card" data-table="2" data-total="13000">
-            <h3>테이블 2</h3>
-            <ul>
-                <li>카푸치노 - 6000원</li>
-                <li>크로와상 - 7000원</li>
-            </ul>
-            <label><input type="checkbox" class="table-check"> 정산 대상 선택</label>
-        </div>
-
-        <div class="table-card" data-table="3" data-total="17000">
-            <h3>테이블 3</h3>
-            <ul>
-                <li>라떼 - 7000원</li>
-                <li>마카롱 - 10000원</li>
-            </ul>
-            <label><input type="checkbox" class="table-check"> 정산 대상 선택</label>
-        </div>
+        <% }) %>
     </main>
     <aside>
         <h3>사이드바</h3>
         <p>추가 정보</p>
         <button class="settle-button" onclick="openModal()">정산하기</button>
     </aside>
-    <footer>
-        <p>푸터 - © 2025</p>
-    </footer>
 </div>
 
 <div id="settle-modal" class="modal-overlay">

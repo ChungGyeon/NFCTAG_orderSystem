@@ -14,7 +14,7 @@ body, html {
     grid-template-areas:
         "header header header"
         "aside   main    main"
-        "footer footer footer";
+        "aside   main  main";
 }
 header {
     grid-area: header;
@@ -34,12 +34,6 @@ main {
 aside {
     grid-area: aside;
     background-color: #d0d0d0;
-    padding: 20px;
-}
-footer {
-    grid-area: footer;
-    background-color: #c0c0c0;
-    text-align: center;
     padding: 20px;
 }
 .settle-button {
