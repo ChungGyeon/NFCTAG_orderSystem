@@ -282,10 +282,16 @@ app.get('/getMenuOptions', (req, res) => {
 
 //주문 완료 처리
 app.post('/DoSendOrder', (req, res) => { 
-    const { menu } = req.body;
-    console.log('주문 완료:', menu); // 주문 완료 로그
-    // 주문 완료 처리 로직을 여기에 추가할 것
-    res.json({ success: true });
+    const { menu, options } = req.body;
+        console.log('주문 완료:', menu, options); // 주문 완료 로그
+
+        const order = { menu, options };
+
+        global.orders = global.orders || [];
+        global.orders.push(order);
+
+        res.json({ success: true });
+
 });
 
 
@@ -313,7 +319,7 @@ const sql = 'SELECT * FROM menu';
 
 
 app.get('/TestStore/TestStore_admin/Order_related_page/test', (req, res) => {
-        res.render('./TestStore/TestStore_admin/Order_related_page/test'); // test.ejs 파일을 렌더링
+        res.render('./TestStore/TestStore_admin/Order_related_page/test', {orders: global.orders || []}); // test.ejs 파일을 렌더링
 });
 
 //308~320 테스트용 손님 페이지 임시로 보류

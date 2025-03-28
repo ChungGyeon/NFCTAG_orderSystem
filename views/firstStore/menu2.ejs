@@ -119,13 +119,18 @@
         document.getElementById('myModal').style.display = 'none';
     }
   
-    function DoSendOrder(name) { 
+    function DoSendOrder(name) {
+        const selectedOptions = [];
+        document.querySelectorAll('#modal-options input[type="checkbox"]:checked').forEach(checkbox => {
+            selectedOptions.push(checkbox.id.replace('option-', ''));
+        });
             fetch('/DoSendOrder', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json' //HTTP의 요청이 JSON형식임을 알리는 헤더
                 },
-                body: JSON.stringify({ menu: selectedMenu })
+
+                body: JSON.stringify({ menu: selectedMenu, options: selectedOptions })
             })
             .then(response => response.json())
             .then(data => {
