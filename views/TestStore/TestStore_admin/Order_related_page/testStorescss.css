@@ -35,7 +35,14 @@ aside {
     grid-area: aside;
     background-color: #d0d0d0;
     padding: 20px;
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr;
 }
+
+
+
+ /*이 아래는 세부 요소들 css*/
+ /* 이 버튼을 아래의 버튼으로 대체함
 .settle-button {
     display: block;
     margin-top: 15px;
@@ -53,7 +60,27 @@ aside {
 .settle-button:hover {
     background-color: #388E3C;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}*/
+
+aside adjustment-button {
+    display: block;
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
 }
+
+aside adjustment-button:hover {
+    background-color: #388E3C;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+
+
 .table-card {
     width: 250px;
     background: white;

@@ -282,10 +282,10 @@ app.get('/getMenuOptions', (req, res) => {
 
 //주문 완료 처리
 app.post('/DoSendOrder', (req, res) => { 
-    const { menu, options } = req.body;
-        console.log('주문 완료:', menu, options); // 주문 완료 로그
+    const { menu, options, totalPrice } = req.body;
+        console.log('주문 완료:', menu, options, totalPrice); // 주문 완료 로그
 
-        const order = { menu, options };
+        const order = { menu, options, totalPrice };
 
         global.orders = global.orders || [];
         global.orders.push(order);
