@@ -91,8 +91,10 @@
   <!--모달 관련 스크립트, 나중에 js파일로 따로 빼놓을 것-->
   <script>
     let selectedMenu = '';//선택한 메뉴 이름 저장
+    let selectedMenuPrice = 0;
     function openModal(id, name, price, description) {
         selectedMenu=name;
+        selectedMenuPrice = parseInt(price, 10); // 가격을 정수로 변환
         document.getElementById('modal-menu-name').textContent = name;
         document.getElementById('modal-price').textContent = price + '원';
         document.getElementById('modal-description').textContent = description;
@@ -106,7 +108,7 @@
                     optionsContainer.innerHTML = ''; // 이전옵션을 초기화
                     data.options.forEach(option => {
                         const label = document.createElement('label');
-                        label.innerHTML = `<p>${option.name}<input type="checkbox" id="option-${option.id}"></p>`;
+                        label.innerHTML = `<p>${option.name} (${option.price}원)<input type="checkbox" id="option-${option.id} data-price="${option.price}"></p>`;
                         optionsContainer.appendChild(label);
                     });
                 })
@@ -121,10 +123,13 @@
   
     function DoSendOrder(name) {
         const selectedOptions = [];
+        let totalPrice = selectedMenuPrice;
         document.querySelectorAll('#modal-options input[type="checkbox"]:checked').forEach(checkbox => {
                 const optionId = checkbox.id.replace('option-', ''); // ID 추출
                 const optionName = checkbox.parentElement.textContent.trim(); // 이름 추출
-                selectedOptions.push({ id: optionId, name: optionName });
+                const optionPrice = parseInt(checkbox.betAtrribute('data-price'), 10); // 가격 추출
+                totalPrice += optionPrice; // 가격 합산
+                selectedOptions.push({ id: optionId, name: optionName, price: optionPrice });
             });
             fetch('/DoSendOrder', {
                 method: 'POST',
@@ -132,15 +137,15 @@
                     'Content-Type': 'application/json' //HTTP의 요청이 JSON형식임을 알리는 헤더
                 },
 
-                body: JSON.stringify({ menu: selectedMenu, options: selectedOptions})
+                body: JSON.stringify({ menu: selectedMenu, options: selectedOptions, totalPrice: totalPrice })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('주문이 완료되었습니다.');
+                    alert('주문이 완료되었습니다. \n총 가격 : ' + totalPrice + '원');
                     closeModal();
                 } else {
-                    alert('주문에 실패했습니다.');
+                    alert('죄송해요! 주문하신 내용을 전달하던 중 사고가 났습니다 ㅠㅠ \n 다시 주문하면 실패하지 않을게요!');
                 }
             })
             .catch(error => {
