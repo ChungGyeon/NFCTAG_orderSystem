@@ -15,7 +15,7 @@
             // 페이지 로드 후 1초 뒤에 다른 페이지로 이동
             //TestPageConnect가 true면 test상점으로
             //아니면 메인으로
-            const TestConnect = "<%= TestPageConnect %>"
+            const TestConnect = <%= JSON.stringify(TestPageConnect) %>
             if(TestConnect){
             setTimeout(() => {
                             window.location.href = './TestStore/TestStore_admin/TestStore_admin_main';
