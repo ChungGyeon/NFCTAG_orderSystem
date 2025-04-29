@@ -4,33 +4,33 @@ function selectOp(id) {
     }, 300);
 }
 function openModal() {
-    const resultBox = document.getElementById("settle-result");
-    resultBox.innerHTML = ''; // 초기화
+           const resultBox = document.getElementById("settle-result");
+           resultBox.innerHTML = ''; // 초기화
 
-    const cards = document.querySelectorAll('.table-card');
-    let grandTotal = 0;
-    let hasData = false;
-   //현재 문제, card.dataset.table이 undefined로 나옴, 이에 따라 총합계가 NaN으로 나옴
-    cards.forEach(card => {
-        const checkbox = card.querySelector('.table-check');
-        if (checkbox.checked) {
-            hasData = true;
-            const tableNum = card.dataset.table;
-            const total = parseInt(card.dataset.total);
-            const items = Array.from(card.querySelectorAll('ul li')).map(li => li.textContent);
+           const cards = document.querySelectorAll('.table-card');
+           let grandTotal = 0;
+           let hasData = false;
+          //현재 문제, card.dataset.table이 undefined로 나옴, 이에 따라 총합계가 NaN으로 나옴
+           cards.forEach(card => {
+               const checkbox = card.querySelector('.table-check');
+               if (checkbox.checked) {
+                   hasData = true;
+                   const tableNum = card.dataset.table;
+                   const total = parseInt(card.dataset.total);
+                   const items = Array.from(card.querySelectorAll('ul li')).map(li => li.textContent);
 
-            grandTotal += total;
+                   grandTotal += total;
 
-            resultBox.innerHTML += `
-                <div style="margin-bottom: 15px;">
-                    <strong>테이블 ${tableNum}</strong><br/>
-                    주문 목록:<br/>
-                    ${items.map(item => `- ${item}`).join('<br/>')}<br/>
-                    <strong>합계: ${total.toLocaleString()}원</strong>
-                </div>
-            `;
-        }
-    });
+                   resultBox.innerHTML += `
+                       <div style="margin-bottom: 15px;">
+                           <strong>테이블 ${tableNum}</strong><br/>
+                           주문 목록:<br/>
+                           ${items.map(item => `- ${item}`).join('<br/>')}<br/>
+                           <strong>합계: ${total.toLocaleString()}원</strong>
+                       </div>
+                   `;
+               }
+           });
 
     if (!hasData) {
         resultBox.innerHTML = `<p>선택된 테이블이 없습니다.</p>`;

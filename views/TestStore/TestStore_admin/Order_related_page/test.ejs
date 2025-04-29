@@ -15,7 +15,7 @@
     <main id="main-content">
         <% orders.forEach(order => { %>
         <!--data-table은 손님쪽에서 id를 구현 후 제작해야해-->
-        <div class="table-card" data-table="1">
+        <div class="table-card" data-table="1" data-total="<%= order.totalPrice %>">
             <h3>테이블 1</h3>
             <ul>
                 <li>
