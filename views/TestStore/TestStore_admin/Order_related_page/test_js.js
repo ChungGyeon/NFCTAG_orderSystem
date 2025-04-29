@@ -10,7 +10,7 @@ function openModal() {
     const cards = document.querySelectorAll('.table-card');
     let grandTotal = 0;
     let hasData = false;
-
+   //현재 문제, card.dataset.table이 undefined로 나옴, 이에 따라 총합계가 NaN으로 나옴
     cards.forEach(card => {
         const checkbox = card.querySelector('.table-check');
         if (checkbox.checked) {
@@ -40,6 +40,25 @@ function openModal() {
 
     document.getElementById("settle-modal").style.display = "flex";
 }
+
+//정산하기 버튼 로직
+function calculateForMenu() {
+    let grandTotal = 0; // 총 합계 초기화
+
+    // 체크된 박스 찾기
+    document.querySelectorAll('.table-card input.table-check:checked').forEach(checkbox => {
+        const card = checkbox.closest('.table-card'); // 체크박스가 속한 카드 찾기
+        const totalPriceElement = card.querySelector('p:nth-child(3)'); // 총 결제금액 요소 찾기
+        if (totalPriceElement) {
+            const totalPrice = parseInt(totalPriceElement.textContent.replace(/[^0-9]/g, ''), 10); // 숫자만 추출
+            grandTotal += totalPrice; // 총 합계에 추가
+        }
+    });
+
+    console.log(`총 합계는 ${grandTotal.toLocaleString()}원입니다.`);
+}
+
+
 
 function closeModal() {
     document.getElementById("settle-modal").style.display = "none";
