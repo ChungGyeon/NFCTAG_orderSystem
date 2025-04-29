@@ -104,11 +104,13 @@
             fetch(`/getMenuOptions?id=${id}`)
                 .then(response => response.json())
                 .then(data => {
+                    console.log('옵션 데이터:', data.options);
                     const optionsContainer = document.getElementById('modal-options');
                     optionsContainer.innerHTML = ''; // 이전옵션을 초기화
                     data.options.forEach(option => {
                         const label = document.createElement('label');
-                        label.innerHTML = `<p>${option.name} (${option.price}원)<input type="checkbox" id="option-${option.id} data-price="${option.price}"></p>`;
+                        label.innerHTML = `<p>${option.name} (${option.additional_price}원)<input type="checkbox" id="option-${option.id}" data-price="${option.additional_price}"></p>`;
+                        console.log(option.price);
                         optionsContainer.appendChild(label);
                     });
                 })
@@ -127,9 +129,10 @@
         document.querySelectorAll('#modal-options input[type="checkbox"]:checked').forEach(checkbox => {
                 const optionId = checkbox.id.replace('option-', ''); // ID 추출
                 const optionName = checkbox.parentElement.textContent.trim(); // 이름 추출
-                const optionPrice = parseInt(checkbox.betAtrribute('data-price'), 10); // 가격 추출
+                const optionPrice = parseInt(checkbox.getAttribute('data-price'), 10); // 가격 추출
                 totalPrice += optionPrice; // 가격 합산
                 selectedOptions.push({ id: optionId, name: optionName, price: optionPrice });
+
             });
             fetch('/DoSendOrder', {
                 method: 'POST',

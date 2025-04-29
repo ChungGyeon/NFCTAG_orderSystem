@@ -3,7 +3,7 @@ function selectOp(id) {
         window.location.href = `Select_menuop/espreeso_op.html?id=${id}`;
     }, 300);
 }
-function openModal() {
+function calculateForMenu() {
            const resultBox = document.getElementById("settle-result");
            resultBox.innerHTML = ''; // 초기화
 
@@ -41,8 +41,8 @@ function openModal() {
     document.getElementById("settle-modal").style.display = "flex";
 }
 
-//정산하기 버튼 로직
-function calculateForMenu() {
+//정산하기 버튼 로직테스트
+function calculateForMenutest() {
     let grandTotal = 0; // 총 합계 초기화
 
     // 체크된 박스 찾기
