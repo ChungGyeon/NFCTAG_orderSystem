@@ -278,8 +278,8 @@ app.get('/firstStore/menu2', (req, res) => {
         //const menuResults = results[0];
         //const menuOptionResults = results[1];
         const menuResults = results;
-        //메인메뉴는 items, 추가옵션은 options
-        res.render('firstStore/menu2', { items:menuResults });//items: menuResults, options: menuOptionResults
+        //메인메뉴는 items, 추가옵션은 options, tableNum은 nfc태그에 부여된 테이블 번호를 넘김
+        res.render('firstStore/menu2', { items:menuResults, tableNum:tableNum });//items: menuResults, options: menuOptionResults
         //res.render('firstStore/menu2', { items: menuResults, options: menuOptionResults });
     });
 });
@@ -300,9 +300,8 @@ app.get('/getMenuOptions', (req, res) => {
 
 //주문 완료 처리
 app.post('/DoSendOrder', (req, res) => { 
-    const { menu, options, totalPrice } = req.body;
-    const tableNum = req.body.tableNum;
-        console.log('주문 완료:', menu, options, totalPrice, tableNum); // 주문 완료 로그
+    const { menu, options, totalPrice, tableNum } = req.body;
+        console.log('주문 완료:', menu, options, totalPrice,tableNum); // 주문 완료 로그
 
         const order = { menu, options, totalPrice };
 
