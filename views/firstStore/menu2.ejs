@@ -53,8 +53,10 @@
           <h2 id="modal-menu-name"></h2>
           <p id="modal-price"></p>
           <p id="modal-description"></p>
+          <br>
           <div id="modal-options"></div>
-          <button onclick="DoSendOrder()">주문 하기</button>
+          <br>
+          <button class="DoSendOrderButton" onclick="DoSendOrder()">주문 하기</button>
         </div>
       </div>
 
@@ -109,8 +111,7 @@
                     optionsContainer.innerHTML = ''; // 이전옵션을 초기화
                     data.options.forEach(option => {
                         const label = document.createElement('label');
-                        label.innerHTML = `<p>${option.name} (${option.additional_price}원)<input type="checkbox" id="option-${option.id}" data-price="${option.additional_price}"></p>`;
-                        console.log(option.price);
+                        label.innerHTML = `<p class="modal-selection"><input type="checkbox" id="option-${option.id}" data-price="${option.additional_price}">${option.name} (${option.additional_price}원)</p>`;
                         optionsContainer.appendChild(label);
                     });
                 })
