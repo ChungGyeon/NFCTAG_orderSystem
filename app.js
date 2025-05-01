@@ -1,4 +1,5 @@
 const express = require('express');
+const session = require('express-session');
 const mysql = require('mysql');
 const path = require('path');
 const multer  = require('multer')
@@ -79,6 +80,11 @@ app.get('/', (req, res) => {
     res.render('main', {TestPageConnect: testPageConnect});// main으로 최초접근 후 다른 곳으로 이동하는 용}
 });
 
+/*
+태그마다 id 구현
+태그마다 1,2,3,4,5와 같은 아이디를 지닌 주소를 nfc태그에 부여하고 그걸 토대로 테이블 번호를 지정하는 방식이 어떨까
+
+*/
 
 //60~177line firstStore 관리자 페이지
 app.get('/firstStore/admin', (req, res) => {
