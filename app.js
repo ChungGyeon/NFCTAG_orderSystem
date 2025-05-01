@@ -47,6 +47,16 @@ const db = mysql.createConnection({
     multipleStatements: true // 여러 쿼리 실행을 허용
 });
 
+//세션환경설정
+/*
+로그인할때 써먹자, 테이블 번호는 쿼리마라메터만 사용하도록 하지
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { masAge: 300000} // 세션 유지 시간 (5분)}
+  )};*/
+
 db.connect((err) => {
     if (err) {
         console.error('데이터베이스 연결 실패: ' + err.stack);
@@ -76,8 +86,9 @@ db.connect((err) => {
 
 
 // 기본 경로 : 상점 접속을 위한 페이지 로드용, 일단 이런식으로 밖에 못고치겠어
-app.get('/', (req, res) => {
-    res.render('main', {TestPageConnect: testPageConnect});// main으로 최초접근 후 다른 곳으로 이동하는 용}
+app.get('/', (req, res) => { // 주소?table_num=1 같은 형식으로 넘어올거야
+    const table_num= req.query.tableNum;
+    res.render('main', {TestPageConnect: testPageConnect, tableNum: table_num});// main으로 최초접근 후 다른 곳으로 이동하는 용}
 });
 
 /*
@@ -250,6 +261,7 @@ app.use("/test_img_upload", express.static(path.join(__dirname, "test_img_upload
 
 // 182~210 첫번째 상점 손님페이지
 app.get('/firstStore/menu2', (req, res) => {
+    const tableNum= req.query.tableNum;
     const sql=`SELECT * FROM menu;`;
     /*
     const sql = `
@@ -289,7 +301,8 @@ app.get('/getMenuOptions', (req, res) => {
 //주문 완료 처리
 app.post('/DoSendOrder', (req, res) => { 
     const { menu, options, totalPrice } = req.body;
-        console.log('주문 완료:', menu, options, totalPrice); // 주문 완료 로그
+    const tableNum = req.body.tableNum;
+        console.log('주문 완료:', menu, options, totalPrice, tableNum); // 주문 완료 로그
 
         const order = { menu, options, totalPrice };
 
