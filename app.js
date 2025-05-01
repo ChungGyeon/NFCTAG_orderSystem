@@ -303,7 +303,7 @@ app.post('/DoSendOrder', (req, res) => {
     const { menu, options, totalPrice, tableNum } = req.body;
         console.log('주문 완료:', menu, options, totalPrice,tableNum); // 주문 완료 로그
 
-        const order = { menu, options, totalPrice };
+        const order = { menu, options, totalPrice, tableNum };
 
         global.orders = global.orders || [];
         global.orders.push(order);
