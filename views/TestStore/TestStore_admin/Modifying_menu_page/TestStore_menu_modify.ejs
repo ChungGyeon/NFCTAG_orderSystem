@@ -60,7 +60,7 @@
                <h2>메뉴 추가 - 첫번째!</h2><br>
                <h3>추가할 메뉴의 이름을 입력해주세요!</h3>
                <input type="text" id="menu-add-name-textarea" name="name" required><br>
-               <button onclick="step2AddmMenuModal()">다음</button>
+               <button onclick="step2AddMenuModal()">다음</button>
            </div>
        </section>
         <section>
@@ -68,8 +68,8 @@
                 <span class="close" onclick="closeAddMenuModal()">&times;</span>
                 <h2>메뉴 추가 - 두번째!</h2><br>
                 <h3>메뉴의 가격을 정해주세요!</h3>
-                <input type="text" id="menu-add-price-textarea" price="price" required><br>
-                <button onclick="step3AddmMenuModal()">다음</button>
+                <input type="text" id="menu-add-price-textarea" name="price" required><br>
+                <button onclick="step3AddMenuModal()">다음</button>
             </div>
         </section>
 
@@ -78,8 +78,8 @@
                  <span class="close" onclick="closeAddMenuModal()">&times;</span>
                  <h2>메뉴 추가 - 세번째!</h2><br>
                  <h3>손님들에게 메뉴의 설명이 필요해요!</h3>
-                 <input type="text" id="menu-add-description-textarea" description="description" required><br>
-                 <button onclick="step4AddmMenuModal()">다음</button>
+                 <input type="text" id="menu-add-description-textarea" name="description" required><br>
+                 <button onclick="step4AddMenuModal()">다음</button>
             </div>
         </section>
 
@@ -88,10 +88,17 @@
                <span class="close" onclick="closeAddMenuModal()">&times;</span>
                <h1>메뉴 추가 - 마지막!</h1><br>
                <h2>마지막으로 메뉴를 멋진 사진으로 꾸며볼까요?</h2><br>
-               <!--<form id="imge_UploadForm" action="/Storeimg_upload" method="POST" enctype="multipart/form-data">-->
-                   <input type="file" name="myFile" />
-                   <button type="submit">Upload</button>
-                   <button onclick="step5AddmMenuModal()">마지막</button>
+               <!--<form id="imge_UploadForm" action="/Storeimg_upload" method="POST" enctype="multipart/form-data"></form>-->
+                   <input type="file" name="myFile" id="imageInput" accept="image/*" onchange="previewImage()" />
+                   <input type="text" id="imageText" required readonly/>
+                   <div id="previewContainer" style="margin-top: 10px;">
+                       <img id="imagePreview" style="max-width: 300px; display: none;" />
+                       <p id="confirm-textPreview"></p>
+                   </div>
+                   <button type="button" id="previewButton" onclick="previewImage()">Preview</button>
+                   <button type="button" id="uploadButton" style="display: none;" onclick="uploadImage()">Upload to Server</button>
+
+                   <button onclick="step5AddMenuModal()">마지막</button>
                </form>
           </div>
         </section>
@@ -105,6 +112,10 @@
                 <input type="hidden" name="description" id="menu-description-confirm-input">
                 <input type="hidden" name="image_url" id="menu-image-confirm-input">
                 <h1>확인해볼까요?</h1><br>
+                <div id="confirm-img" style="margin-top: 10px;">
+                  <img id="confirm-img-preview" style="max-width: 300px; display: none;" />
+                  <p id="textPreview"></p>
+                </div>
                 <h2>메뉴 이름 : <label for="name"><span id="menu-name-confirm-text"></span></label></h2>
                 <h2>메뉴 가격 : <label for="price"><span id="menu-price-confirm-text"></span></label></h2>
                 <h2>메뉴 설명 : <label for="description"><span id="menu-description-confirm-text"></label></span></h2>
@@ -153,25 +164,36 @@
         document.getElementById('menu-add-name').style.display = 'block';
     }
 
-    function step2AddmMenuModal() {
+    function step2AddMenuModal() {
         document.getElementById('menu-add-name').style.display = 'none';
         document.getElementById('menu-add-price').style.display = 'block';
     }
 
-    function step3AddmMenuModal() {
+    function step3AddMenuModal() {
         document.getElementById('menu-add-price').style.display = 'none';
         document.getElementById('menu-add-description').style.display = 'block';
     }
-    function step4AddmMenuModal() {
+    function step4AddMenuModal() {
         document.getElementById('menu-add-description').style.display = 'none';
         document.getElementById('menu-add-imgupload').style.display = 'block';
     }
-    function step5AddmMenuModal() {
+    function step5AddMenuModal() {
         document.getElementById('menu-add-imgupload').style.display = 'none';
+
+        const confirmImgPreview = document.getElementById('confirm-img-preview');
+              const confirmTextPreview = document.getElementById('confirm-textPreview');
+              const textInput = document.getElementById('imageText');
+
+              if (imagePreview) {
+                    confirmImgPreview.src = imagePreview.src;
+                    confirmImgPreview.style.display = 'block';
+                    }
+                  confirmTextPreview.textContent = textInput.value;
         const name = document.getElementById('menu-add-name-textarea').value;
         const price = document.getElementById('menu-add-price-textarea').value;
         const description = document.getElementById('menu-add-description-textarea').value;
         //이미지 입력 안할 시 아에 출력 시키지 않는거
+        /*
         if(document.getElementById('menu-add-imgupload').value==undefined){
             console.log('이미지 없음');
             document.getElementById('isthere-image').remove();
@@ -180,7 +202,7 @@
         const image = document.getElementById('menu-add-imgupload').value;
         document.getElementById('menu-image-confirm-text').innerText = image;
         document.getElementById('menu-image-confirm-input').value = image;
-        }
+        }*/
         //화면 표시용
         document.getElementById('menu-name-confirm-text').innerText = name;
         document.getElementById('menu-price-confirm-text').innerText = price;
@@ -193,9 +215,7 @@
 
         document.getElementById('confirm_menu_add_process').style.display = 'block';
     }
-    function step6AddmMenuModal() {
-        deleteForm.submit();
-    }
+
     function closeAddMenuModal() {
         document.getElementById('menu_add_section').style.display = 'none';
         document.getElementById('menu-add-name').style.display = 'none';
@@ -222,6 +242,59 @@
       function confirmDelete() {
         deleteForm.submit();
       }
+
+    //이미지 관련 스크립트
+    let selectedFile = null;
+    let imagePreview = null;
+    function previewImage() {
+        const imageInput = document.getElementById('imageInput');
+        imagePreview = document.getElementById('imagePreview');
+        const textInput = document.getElementById('imageText');
+        const textPreview = document.getElementById('textPreview');
+        const uploadButton = document.getElementById('uploadButton');
+
+        // 파일이 제대로 들어왔는지 확인
+        if (imageInput.files && imageInput.files[0]) {
+            selectedFile = imageInput.files[0];
+
+            //파일이름을 텍스트영역에 할당
+            textInput.value = selectedFile.name;
+
+            // 이미지 프리뷰 제공 스크립트
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+            };
+            reader.readAsDataURL(selectedFile);
+
+            // 이미지 이름 미리보기
+            textPreview.textContent = textInput.value;
+
+            // 업로드 버튼
+            uploadButton.style.display = 'inline-block';
+        } else {
+            alert('Please select an image first!');
+        }
+    }
+
+/*
+    function previewImage2() {
+        // 두 번째 화면의 프리뷰 업데이트
+       const confirm-img-preview = document.getElementById('confirm-img-preview');
+       const confirm-textPreview = document.getElementById('confirm-textPreview');
+       const textInput = document.getElementById('imageText');
+
+       if (imagePreview) {
+             confirm-img-preview.src = imagePreview;
+             confirm-img-preview.style.display = 'block';
+             }
+           confirm-textPreview.textContent = textInput.value;
+    }
+
+*/
+
+
 </script>
 </body>
 </html>
