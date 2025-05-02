@@ -88,12 +88,31 @@
                <span class="close" onclick="closeAddMenuModal()">&times;</span>
                <h1>메뉴 추가 - 마지막!</h1><br>
                <h2>마지막으로 메뉴를 멋진 사진으로 꾸며볼까요?</h2><br>
-               <form id="imge_UploadForm" action="/Storeimg_upload" method="POST" enctype="multipart/form-data">
+               <!--<form id="imge_UploadForm" action="/Storeimg_upload" method="POST" enctype="multipart/form-data">-->
                    <input type="file" name="myFile" />
                    <button type="submit">Upload</button>
+                   <button onclick="step5AddmMenuModal()">마지막</button>
                </form>
           </div>
         </section>
+
+       <section>
+           <div id="confirm_menu_add_process" class="menu-add-step">
+               <span class="close" onclick="closeAddMenuModal()">&times;</span>
+               <form action="/admin_adTomenu" method="POST">
+                <input type="hidden" name="name" id="menu-name-confirm-input">
+                <input type="hidden" name="price" id="menu-price-confirm-input">
+                <input type="hidden" name="description" id="menu-description-confirm-input">
+                <input type="hidden" name="image_url" id="menu-image-confirm-input">
+                <h1>확인해볼까요?</h1><br>
+                <h2>메뉴 이름 : <label for="name"><span id="menu-name-confirm-text"></span></label></h2>
+                <h2>메뉴 가격 : <label for="price"><span id="menu-price-confirm-text"></span></label></h2>
+                <h2>메뉴 설명 : <label for="description"><span id="menu-description-confirm-text"></label></span></h2>
+                <h2 id ="isthere-image">메뉴 이미지 : <label for="image_url"><span id="menu-image-confirm-text"></span></label></h2>
+                <button type="submit">확인</button>
+                </form>
+           </div>
+       </section>
    </div>
 
    <!--삭제 확인 모달, 관련 스크립 함수(openConfirmModal, closeConfirModal, confirmDelete)-->
@@ -148,6 +167,33 @@
         document.getElementById('menu-add-imgupload').style.display = 'block';
     }
     function step5AddmMenuModal() {
+        document.getElementById('menu-add-imgupload').style.display = 'none';
+        const name = document.getElementById('menu-add-name-textarea').value;
+        const price = document.getElementById('menu-add-price-textarea').value;
+        const description = document.getElementById('menu-add-description-textarea').value;
+        //이미지 입력 안할 시 아에 출력 시키지 않는거
+        if(document.getElementById('menu-add-imgupload').value==undefined){
+            console.log('이미지 없음');
+            document.getElementById('isthere-image').remove();
+        }
+        else{
+        const image = document.getElementById('menu-add-imgupload').value;
+        document.getElementById('menu-image-confirm-text').innerText = image;
+        document.getElementById('menu-image-confirm-input').value = image;
+        }
+        //화면 표시용
+        document.getElementById('menu-name-confirm-text').innerText = name;
+        document.getElementById('menu-price-confirm-text').innerText = price;
+        document.getElementById('menu-description-confirm-text').innerText = description;
+
+        //서버 전송용
+        document.getElementById('menu-name-confirm-input').value = name;
+        document.getElementById('menu-price-confirm-input').value = price;
+        document.getElementById('menu-description-confirm-input').value = description;
+
+        document.getElementById('confirm_menu_add_process').style.display = 'block';
+    }
+    function step6AddmMenuModal() {
         deleteForm.submit();
     }
     function closeAddMenuModal() {
@@ -156,7 +202,10 @@
         document.getElementById('menu-add-price').style.display = 'none';
         document.getElementById('menu-add-description').style.display = 'none';
         document.getElementById('menu-add-imgupload').style.display = 'none';
+        document.getElementById('confirm_menu_add_process').style.display = 'none';
       }
+
+
     /*관리자 페이지에는 일단 모달 생성, 메뉴 주문 스크립트는 일단 삭제, 아차피 수정,삭제가 주목적인데*/
     let deleteForm;
 
