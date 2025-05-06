@@ -106,21 +106,23 @@
        <section>
            <div id="confirm_menu_add_process" class="menu-add-step">
                <span class="close" onclick="closeAddMenuModal()">&times;</span>
-               <form id="imge_UploadForm" action="/addToMenuInfo" method="POST" enctype="multipart/form-data">
-                <input type="hidden" name="image_url" id="menu-img-confirm-input">
-                <input type="hidden" name="name" id="menu-name-confirm-input">
-                <input type="hidden" name="price" id="menu-price-confirm-input">
-                <input type="hidden" name="description" id="menu-description-confirm-input">
-                <h1>확인해볼까요?</h1><br>
-                <div id="confirm-img" style="margin-top: 10px;">
-                  <img id="confirm-img-preview" style="max-width: 300px; display: none;" />
-                  <p id="textPreview"></p>
-                </div>
-                <h2>메뉴 이름 : <label for="name"><span id="menu-name-confirm-text"></span></label></h2>
-                <h2>메뉴 가격 : <label for="price"><span id="menu-price-confirm-text"></span></label></h2>
-                <h2>메뉴 설명 : <label for="description"><span id="menu-description-confirm-text"></span></label></h2>
-                <button class="confirm_menu_add--stepbutton" type="submit">메뉴 추가</button>
-                </form>
+               <h1>확인해볼까요?</h1><br>
+               <div id="confirm-img" style="margin-top: 10px;">
+                   <img id="confirm-img-preview" style="max-width: 300px; display: none;" />
+                   <p id="textPreview"></p>
+               </div>
+
+               <h2>메뉴 이름 : <span id="menu-name-confirm-text"></span></h2>
+               <h2>메뉴 가격 : <span id="menu-price-confirm-text"></span></h2>
+               <h2>메뉴 설명 : <span id="menu-description-confirm-text"></span></h2>
+
+               <!-- 입력 필드 -->
+               <input type="file" id="menu-img-confirm-input" name="myFile">
+               <input type="text" id="menu-name-confirm-input" name="name">
+               <input type="text" id="menu-price-confirm-input" name="price">
+               <input type="text" id="menu-description-confirm-input" name="description">
+
+               <button class="confirm_menu_add--stepbutton" onclick="uploadMenu()">메뉴 추가</button>
            </div>
        </section>
    </div>
@@ -266,7 +268,7 @@
             alert('Please select an image first!');
         }
     }
-
+/*
     function uploadImage() { //메뉴 추가에서 이미지를 서버에 업로드 용 로직
           const imageInput = document.getElementById('imge_UploadForm');
           const formData = new FormData();
@@ -286,8 +288,39 @@
               }
           })
           .catch(error => console.error('업로드 오류:', error));
-      }
+      }*/
 
+    function uploadMenu() {
+        const formData = new FormData();
+
+        const fileInput = document.getElementById('menu-img-confirm-input');
+        const nameInput = document.getElementById('menu-name-confirm-input');
+        const priceInput = document.getElementById('menu-price-confirm-input');
+        const descInput = document.getElementById('menu-description-confirm-input');
+
+        formData.append('myFile', fileInput.files[0]);
+        formData.append('name', nameInput.value);
+        formData.append('price', priceInput.value);
+        formData.append('description', descInput.value);
+
+        fetch('/addToMenuInfo', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else {
+                    return response.text();
+                }
+            })
+            .then(data => {
+                if (data) console.log('서버 응답:', data);
+            })
+            .catch(error => {
+                console.error('업로드 실패:', error);
+            });
+    }
 
 </script>
 </body>
