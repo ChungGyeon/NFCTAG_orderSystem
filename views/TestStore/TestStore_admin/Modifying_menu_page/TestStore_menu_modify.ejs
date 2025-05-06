@@ -118,7 +118,7 @@
                 </div>
                 <h2>메뉴 이름 : <label for="name"><span id="menu-name-confirm-text"></span></label></h2>
                 <h2>메뉴 가격 : <label for="price"><span id="menu-price-confirm-text"></span></label></h2>
-                <h2>메뉴 설명 : <label for="description"><span id="menu-description-confirm-text"></label></span></h2>
+                <h2>메뉴 설명 : <label for="description"><span id="menu-description-confirm-text"></span></label></h2>
                 <button class="confirm_menu_add--stepbutton" type="submit">메뉴 추가</button>
                 </form>
            </div>
@@ -191,17 +191,7 @@
         const name = document.getElementById('menu-add-name-textarea').value;
         const price = document.getElementById('menu-add-price-textarea').value;
         const description = document.getElementById('menu-add-description-textarea').value;
-        //이미지 입력 안할 시 아에 출력 시키지 않는거
-        /*
-        if(document.getElementById('menu-add-imgupload').value==undefined){
-            console.log('이미지 없음');
-            document.getElementById('isthere-image').remove();
-        }
-        else{
-        const image = document.getElementById('menu-add-imgupload').value;
-        document.getElementById('menu-image-confirm-text').innerText = image;
-        document.getElementById('menu-image-confirm-input').value = image;
-        }*/
+
         //화면 표시용
         document.getElementById('menu-name-confirm-text').innerText = name;
         document.getElementById('menu-price-confirm-text').innerText = price;
