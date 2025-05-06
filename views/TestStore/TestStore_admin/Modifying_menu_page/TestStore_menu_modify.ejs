@@ -52,15 +52,15 @@
           <button class="confirm_menu_add" onclick="openAddMenuModal()"> 메뉴 추가하기 </button>
     </section>
 
-  <!--메뉴 추가 섹션 : 이름,가격,설명,이미지 순으로 하나씩 모달이 나오게끔 설정할 거야-->
+  <!--메뉴 추가 섹션 : 이름,가격,설명,이미지 순으로 하나씩 모달이 나옴, 추후 js로 리펙토링 쌉가능-->
    <div id="menu_add_section" class="menu-add-step">
        <section>
            <div id="menu-add-name" class="menu-add-modal">
                <span class="close" onclick="closeAddMenuModal()">&times;</span>
                <h2>메뉴 추가 - 첫번째!</h2><br>
-               <h3>추가할 메뉴의 이름을 입력해주세요!</h3>
+               <h3>추가할 메뉴의 이름을 입력해주세요!</h3><br>
                <input type="text" id="menu-add-name-textarea" name="name" required><br>
-               <button onclick="step2AddMenuModal()">다음</button>
+               <button class="confirm_menu_add--stepbutton" onclick="step2AddMenuModal()">다음</button>
            </div>
        </section>
         <section>
@@ -69,7 +69,7 @@
                 <h2>메뉴 추가 - 두번째!</h2><br>
                 <h3>메뉴의 가격을 정해주세요!</h3>
                 <input type="text" id="menu-add-price-textarea" name="price" required><br>
-                <button onclick="step3AddMenuModal()">다음</button>
+                <button class="confirm_menu_add--stepbutton" onclick="step3AddMenuModal()">다음</button>
             </div>
         </section>
 
@@ -79,7 +79,7 @@
                  <h2>메뉴 추가 - 세번째!</h2><br>
                  <h3>손님들에게 메뉴의 설명이 필요해요!</h3>
                  <input type="text" id="menu-add-description-textarea" name="description" required><br>
-                 <button onclick="step4AddMenuModal()">다음</button>
+                 <button class="confirm_menu_add--stepbutton" onclick="step4AddMenuModal()">다음</button>
             </div>
         </section>
 
@@ -98,7 +98,7 @@
                    <button type="button" id="previewButton" onclick="previewImage()">Preview</button>
                    <button type="button" id="uploadButton" style="display: none;" onclick="uploadImage()">Upload to Server</button>
 
-                   <button onclick="step5AddMenuModal()">마지막</button>
+                   <button class="confirm_menu_add--stepbutton" onclick="step5AddMenuModal()">마지막</button>
                </form>
           </div>
         </section>
@@ -106,11 +106,11 @@
        <section>
            <div id="confirm_menu_add_process" class="menu-add-step">
                <span class="close" onclick="closeAddMenuModal()">&times;</span>
-               <form action="/admin_adTomenu" method="POST">
+               <form id="imge_UploadForm" action="/addToMenuInfo" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="image_url" id="menu-img-confirm-input">
                 <input type="hidden" name="name" id="menu-name-confirm-input">
                 <input type="hidden" name="price" id="menu-price-confirm-input">
                 <input type="hidden" name="description" id="menu-description-confirm-input">
-                <input type="hidden" name="image_url" id="menu-image-confirm-input">
                 <h1>확인해볼까요?</h1><br>
                 <div id="confirm-img" style="margin-top: 10px;">
                   <img id="confirm-img-preview" style="max-width: 300px; display: none;" />
@@ -119,8 +119,7 @@
                 <h2>메뉴 이름 : <label for="name"><span id="menu-name-confirm-text"></span></label></h2>
                 <h2>메뉴 가격 : <label for="price"><span id="menu-price-confirm-text"></span></label></h2>
                 <h2>메뉴 설명 : <label for="description"><span id="menu-description-confirm-text"></label></span></h2>
-                <h2 id ="isthere-image">메뉴 이미지 : <label for="image_url"><span id="menu-image-confirm-text"></span></label></h2>
-                <button type="submit">확인</button>
+                <button class="confirm_menu_add--stepbutton" type="submit">메뉴 추가</button>
                 </form>
            </div>
        </section>
@@ -278,21 +277,26 @@
         }
     }
 
-/*
-    function previewImage2() {
-        // 두 번째 화면의 프리뷰 업데이트
-       const confirm-img-preview = document.getElementById('confirm-img-preview');
-       const confirm-textPreview = document.getElementById('confirm-textPreview');
-       const textInput = document.getElementById('imageText');
+    function uploadImage() { //메뉴 추가에서 이미지를 서버에 업로드 용 로직
+          const imageInput = document.getElementById('imge_UploadForm');
+          const formData = new FormData();
+          formData.append('myFile', imageInput.files[0]);
 
-       if (imagePreview) {
-             confirm-img-preview.src = imagePreview;
-             confirm-img-preview.style.display = 'block';
-             }
-           confirm-textPreview.textContent = textInput.value;
-    }
-
-*/
+          fetch('/StoreImg_upload', {
+              method: 'POST',
+              body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.filename) {
+                  document.getElementById('image_url').value = data.filename;
+                  alert('이미지 업로드 완료!');
+              } else {
+                  alert('이미지 업로드 실패!');
+              }
+          })
+          .catch(error => console.error('업로드 오류:', error));
+      }
 
 
 </script>
