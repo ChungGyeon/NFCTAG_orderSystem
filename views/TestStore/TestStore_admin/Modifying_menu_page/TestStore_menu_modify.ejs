@@ -146,14 +146,34 @@
 
      <!--추가메뉴 관련 모달-->
       <div id="additionalMenu_section" class="modal">
+       <section>
         <div class="modal-content">
           <span class="close" onclick="closeAddMenuModal();">&times;</span>
           <h2 id="modal-menu-name"></h2>
           <p id="modal-price"></p>
           <p id="modal-description"></p>
           <div id="modal-options"></div>
-          <button onclick="DoSendOrder()">주문 하기</button>
+          <button class="addToPlusMenu" onclick="openAdditionalMenuModal()">옵션 추가</button>
         </div>
+       </section>
+       <section>
+           <div id="additionalMenu_modal" class="additionalMenu_modal_section">
+               <!--이 x버튼은 특별히 전 단계로 돌아가는 것으로 만듦-->
+               <span class="close" onclick="document.getElementById('additionalMenu_modal').style.display = 'none';">&times;</span>
+               <form id="option_imge_UploadForm" action="/admin_adTooption" method="POST">
+                   <!--여기에 현재 메뉴의 이름과, 히든으로 id를 가져오는걸 구현해야되네
+                   <label for="menu_id">옵션 추가할 메뉴의 id:</label>
+                   <input type="text" id="menu_id" name="menu_id" required><br>-->
+                   <label for="name">설정할 옵션 이름:</label>
+                   <input type="text" id="name" name="name" required><br><br>
+                   <label for="additional_price">옵션 가격:</label>
+                   <input type="number" id="additional_price" name="additional_price" step="1" required><br><br>
+                   <label for="description">옵션 설명:</label>
+                   <textarea id="description" name="description" required></textarea><br><br>
+                   <button type="submit">Add Option</button>
+               </form>
+           </div>
+       </section>
       </div>
 
   </main>
@@ -326,6 +346,7 @@
             });
     }
 
+
     //추가메뉴 관련 스크립트
     //추가메뉴 정보 로드 스크립트
     function loadAdditonalMenu(id, name, price, description) {
@@ -346,13 +367,18 @@
                 optionsContainer.innerHTML = ''; // 이전옵션을 초기화
                 data.options.forEach(option => {
                     const label = document.createElement('label');
-                    label.innerHTML = `<p class="additionalMenu_section"><input type="checkbox" id="option-${option.id}" data-price="${option.additional_price}">${option.name} (${option.additional_price}원)</p>`;
+                    label.innerHTML = `<p class="additionalMenu_section"><input type="hidden" id="option-${option.id}" data-price="${option.additional_price}">${option.name} (${option.additional_price}원)</input>
+                    <button>삭제</button><button>수정</button>`;
                     optionsContainer.appendChild(label);
                 });
             })
             .catch(error => {
                 console.error('추가옵션을 가져오는데 실패하였습니다. :', error);
             });
+    }
+
+    function openAdditionalMenuModal(){
+        document.getElementById('additionalMenu_modal').style.display = 'block';
     }
 
 </script>
