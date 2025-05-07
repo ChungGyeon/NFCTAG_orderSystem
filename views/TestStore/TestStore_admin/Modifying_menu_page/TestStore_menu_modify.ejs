@@ -165,6 +165,7 @@
            <div id="additionalMenu_modal" class="additionalMenu_modal_section">
                <!--이 x버튼은 특별히 전 단계로 돌아가는 것으로 만듦-->
                <span class="close" onclick="document.getElementById('additionalMenu_modal').style.display = 'none';">&times;</span>
+               <!--추가메뉴 전송 템플릿, targetOfAdditionalMenu_id는 openAdditionalMenuModal()(366line)을 참조-->
                <form id="option_imge_UploadForm" action="/test_adTooption" method="POST">
                    <input type="hidden" name="targetOfAdditionalMenu_id" id="targetOfAdditionalMenu_id"/>
                    <H2>선택한 메뉴 :</H2><H1 id="MenuName"></H1><br>
@@ -176,20 +177,6 @@
                    <textarea id="description" name="description" required></textarea><br><br>
                    <button type="submit">Add Option</button>
                </form>
-
-               <!--
-        <form id="option_imge_UploadForm" action="/admin_adTooption" method="POST" onsubmit="OptionUploadImage(); return false;">
-        <label for="menu_id">옵션 추가할 메뉴의 id:</label>
-        <input type="text" id="menu_id" name="menu_id" required>
-        <label for="name">옵션 이름:</label>
-        <input type="text" id="name" name="name" required><br>
-        <label for="additional_price">옵션 가격:</label>
-        <input type="number" id="additional_price" name="additional_price" step="1" required><br>
-        <label for="description">옵션 설명:</label>
-        <textarea id="description" name="description" required></textarea><br><br>
-        <button type="submit">Add Option</button>
-      </form>
-               -->
            </div>
        </section>
       </div>
@@ -310,27 +297,7 @@
             alert('Please select an image first!');
         }
     }
-/*
-    function uploadImage() { //메뉴 추가에서 이미지를 서버에 업로드 용 로직
-          const imageInput = document.getElementById('imge_UploadForm');
-          const formData = new FormData();
-          formData.append('myFile', imageInput.files[0]);
 
-          fetch('/StoreImg_upload', {
-              method: 'POST',
-              body: formData
-          })
-          .then(response => response.json())
-          .then(data => {
-              if (data.filename) {
-                  document.getElementById('image_url').value = data.filename;
-                  alert('이미지 업로드 완료!');
-              } else {
-                  alert('이미지 업로드 실패!');
-              }
-          })
-          .catch(error => console.error('업로드 오류:', error));
-      }*/
     //업로드 버튼 클릭 시 서버에 이미지,메뉴 텍스트 인포를 서버에 전송 및 저장
     function uploadMenu() {
         const formData = new FormData();
@@ -397,6 +364,10 @@
     }
 
     function openAdditionalMenuModal(id,menuName,price){
+        /*각,additionalMenu_modal을 활성화,
+        loadAdditonalMenu()에서 additionalMenu_section 섹션으로 id를 넘겨주고 이를 openAdditionalMenuModal()안에 넣어 targetOfAdditionalMenu_id로 가져온 menu_id,
+        MenuName은 additionalMenu_section에서 id=modal-menu-name의 정보를 그대로 넘겨받아 옴
+        * */
         document.getElementById('additionalMenu_modal').style.display = 'block';
         document.getElementById('targetOfAdditionalMenu_id').value = id;
         document.getElementById('MenuName').textContent=menuName;
