@@ -37,6 +37,8 @@
           <!--<div class="menu-container" onclick="openModal(<%= item.id %>, '<%= item.name %>', '<%= item.price %>', '<%= item.description %>')">-->
            <div class="menu-container" onclick="loadAdditonalMenu(<%= item.id %>, '<%= item.name %>', '<%= item.price %>', '<%= item.description %>')">
             <div class="menu-details">
+            <!--아래 히든은 loadAdditionalMenu가 열어주는 페이지에게 주기 위한 거-->
+            <input type="hidden" name="id" value="<%= item.id %>">
             <h2><%= item.name %></h2>
             <p class="price"><%= item.price %>원</p>
             <p class="review"><%= item.description %></p>
@@ -153,7 +155,10 @@
           <p id="modal-price"></p>
           <p id="modal-description"></p>
           <div id="modal-options"></div>
-          <button class="addToPlusMenu" onclick="openAdditionalMenuModal()">옵션 추가</button>
+          <input type="hidden" id="menu_id" required readonly/>
+          <button class="addToPlusMenu" onclick="openAdditionalMenuModal(document.getElementById('menu_id').value,document.getElementById('modal-menu-name').innerText,document.getElementById('modal-price').innerText)">
+              옵션 추가
+          </button>
         </div>
        </section>
        <section>
@@ -164,6 +169,8 @@
                    <!--여기에 현재 메뉴의 이름과, 히든으로 id를 가져오는걸 구현해야되네
                    <label for="menu_id">옵션 추가할 메뉴의 id:</label>
                    <input type="text" id="menu_id" name="menu_id" required><br>-->
+                   <input type="hidden" id="targetOfAdditionalMenu_id" readonly/>
+                   <H2>선택한 메뉴 :</H2><H1 id="MenuName"></H1><br>
                    <label for="name">설정할 옵션 이름:</label>
                    <input type="text" id="name" name="name" required><br><br>
                    <label for="additional_price">옵션 가격:</label>
@@ -354,6 +361,7 @@
         let selectedMenuPrice = 0;
         selectedMenu=name;
         selectedMenuPrice = parseInt(price, 10); // 가격을 정수로 변환
+        document.getElementById('menu_id').value = id;
         document.getElementById('modal-menu-name').textContent = name;
         document.getElementById('modal-price').textContent = price + '원';
         document.getElementById('modal-description').textContent = description;
@@ -377,8 +385,10 @@
             });
     }
 
-    function openAdditionalMenuModal(){
+    function openAdditionalMenuModal(id,menuName,price){
         document.getElementById('additionalMenu_modal').style.display = 'block';
+        document.getElementById('targetOfAdditionalMenu_id').value = id;
+        document.getElementById('MenuName').textContent=menuName;
     }
 
 </script>
