@@ -132,15 +132,15 @@ app.post('/admin_adTomenu', (req, res) => {
     }
 
     function insertMenu() {
-        const { name, image_url, price, description } = req.body;
-        const sql = 'INSERT INTO menu (id, name, image_url, price, description) VALUES (?, ?, ?, ?, ?)';
-        db.query(sql, [id, name, image_url, price, description], (err, result) => {
+        const { name, price, description, image_url } = req.body;
+        const sql = 'INSERT INTO menu (id, name, price, description, image_url) VALUES (?, ?, ?, ?, ?)';
+        db.query(sql, [id, name, price,description, image_url], (err, result) => {
             if (err) {
                 console.error('쿼리가 제대로 명시되지 않았습니다.: ' + err.stack);
                 res.status(500).send('데이터베이스 쿼리 실패');
                 return;
             }
-            res.redirect('/firstStore/admin');
+            res.redirect('/TestStore/TestStore_admin/Modifying_menu_page/TestStore_menu_modify');
         });
     }
 });
@@ -236,12 +236,57 @@ upload.single() : 파일이 하나일 때 사용 하는 함수, 인수로는 htm
 인수인 myFile은 나중에 수정예정, html에서도 수정요구
 */
 //firstStore 어드민용 메뉴추가 이미지 업로드 구축
+/*
 app.post('/StoreImg_upload', upload.single('myFile'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: "파일이 업로드되지 않았습니다." });
     }
     //res.json({ filename: req.file.originalname });
     res.redirect(`firstStore/admin?filename=${encodeURIComponent(req.file.originalname)}`);
+});*/
+//test-menu-modify용 메뉴추가 이미지 업로드 구축
+app.post('/StoreImg_upload', upload.single('myFile'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: "파일이 업로드되지 않았습니다." });
+    }
+    //res.json({ filename: req.file.originalname });
+    res.redirect(`TestStore/TestStore_admin/Modifying_menu_page/TestStore_menu_modify?filename=${encodeURIComponent(req.file.originalname)}`);
+});
+
+/*이미지 전송과, 메뉴 정보를 동시에 처리하는 로직, 혼자 도전해볼게 25/05/04*/
+app.post('/addToMenuInfo', upload.single('myFile'),(req, res) => {
+    console.log('보디 내용물', req.body);
+    console.log('req.file:', req.file);
+    var id = 0;
+        if (req.body.id == 0) {
+            id = 1;
+            insertMenu();
+        } else {
+            const fInd_max_id_from_menu = 'SELECT MAX(id) as max_id FROM menu';
+            db.query(fInd_max_id_from_menu, (err, result) => {
+                if (err) {
+                    console.error('id 조회 실패: ' + err.stack);
+                    res.status(500).send('데이터베이스 쿼리 실패');
+                    return;
+                }
+                id = (result[0].max_id || 0) + 1;
+                insertMenu();
+            });
+        }
+
+    function insertMenu() {
+        const { name, price, description } = req.body;
+        const image_url = req.file? req.file.filename : null;
+        const sql = 'INSERT INTO menu (id, name, price, description, image_url) VALUES (?, ?, ?, ?, ?)';
+        db.query(sql, [id, name, price,description, image_url], (err, result) => {
+            if (err) {
+                console.error('쿼리가 제대로 명시되지 않았습니다.: ' + err.stack);
+                res.status(500).send('데이터베이스 쿼리 실패');
+                return;
+            }
+            res.redirect('/TestStore/TestStore_admin/Modifying_menu_page/TestStore_menu_modify');
+        });
+    }
 });
 /* 메뉴 추가옵션은 잠시 미룸
 //firstStore 어드민용 옵션추가 이미지 업로드 구축

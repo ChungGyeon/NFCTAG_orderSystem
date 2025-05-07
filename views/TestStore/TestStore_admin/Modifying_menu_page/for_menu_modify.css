@@ -153,6 +153,12 @@
         font-weight: bold;
         font-size: 20px;
     }
+    .confirm_menu_add--stepbutton {
+        width: 100px;
+        height: 50px;
+        margin: 2em auto auto;
+
+    }
 
 
 
@@ -171,10 +177,23 @@
   animation: slide-up 0.5s ease-out;
 
 }
-.menu-add-name {
-  display: none; /* 기본적으로 숨김 */
+.nextStepbutton {
 
 }
+.menu-add-name {
+  display: none; /* 기본적으로 숨김 */
+}
+input {
+   width: 300px;
+   height: 40px;
+   font-size: 15px;
+   border: 0;
+   border-radius: 15px;
+   outline: auto;
+   outline-color: rgb(233, 233, 233);
+   padding-left: 10px;
+ }
+
 .menu-add-price {
   display: none; /* 기본적으로 숨김 */
 
@@ -187,6 +206,8 @@
   display: none; /* 기본적으로 숨김 */
 
 }
+
+
   /* 삭제버튼 확인 모달css */
   .confirm-modal {
     display: none; /* Hidden by default */

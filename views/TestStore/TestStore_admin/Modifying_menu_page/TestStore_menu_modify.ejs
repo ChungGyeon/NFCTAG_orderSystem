@@ -52,15 +52,15 @@
           <button class="confirm_menu_add" onclick="openAddMenuModal()"> 메뉴 추가하기 </button>
     </section>
 
-  <!--메뉴 추가 섹션 : 이름,가격,설명,이미지 순으로 하나씩 모달이 나오게끔 설정할 거야-->
+  <!--메뉴 추가 섹션 : 이름,가격,설명,이미지 순으로 하나씩 모달이 나옴, 추후 js로 리펙토링 쌉가능-->
    <div id="menu_add_section" class="menu-add-step">
        <section>
            <div id="menu-add-name" class="menu-add-modal">
                <span class="close" onclick="closeAddMenuModal()">&times;</span>
                <h2>메뉴 추가 - 첫번째!</h2><br>
-               <h3>추가할 메뉴의 이름을 입력해주세요!</h3>
+               <h3>추가할 메뉴의 이름을 입력해주세요!</h3><br>
                <input type="text" id="menu-add-name-textarea" name="name" required><br>
-               <button onclick="step2AddmMenuModal()">다음</button>
+               <button class="confirm_menu_add--stepbutton" onclick="step2AddMenuModal()">다음</button>
            </div>
        </section>
         <section>
@@ -68,8 +68,8 @@
                 <span class="close" onclick="closeAddMenuModal()">&times;</span>
                 <h2>메뉴 추가 - 두번째!</h2><br>
                 <h3>메뉴의 가격을 정해주세요!</h3>
-                <input type="text" id="menu-add-price-textarea" price="price" required><br>
-                <button onclick="step3AddmMenuModal()">다음</button>
+                <input type="text" id="menu-add-price-textarea" name="price" required><br>
+                <button class="confirm_menu_add--stepbutton" onclick="step3AddMenuModal()">다음</button>
             </div>
         </section>
 
@@ -78,8 +78,8 @@
                  <span class="close" onclick="closeAddMenuModal()">&times;</span>
                  <h2>메뉴 추가 - 세번째!</h2><br>
                  <h3>손님들에게 메뉴의 설명이 필요해요!</h3>
-                 <input type="text" id="menu-add-description-textarea" description="description" required><br>
-                 <button onclick="step4AddmMenuModal()">다음</button>
+                 <input type="text" id="menu-add-description-textarea" name="description" required><br>
+                 <button class="confirm_menu_add--stepbutton" onclick="step4AddMenuModal()">다음</button>
             </div>
         </section>
 
@@ -88,12 +88,42 @@
                <span class="close" onclick="closeAddMenuModal()">&times;</span>
                <h1>메뉴 추가 - 마지막!</h1><br>
                <h2>마지막으로 메뉴를 멋진 사진으로 꾸며볼까요?</h2><br>
-               <form id="imge_UploadForm" action="/Storeimg_upload" method="POST" enctype="multipart/form-data">
-                   <input type="file" name="myFile" />
-                   <button type="submit">Upload</button>
+               <!--<form id="imge_UploadForm" action="/Storeimg_upload" method="POST" enctype="multipart/form-data"></form>-->
+                   <input type="file" name="myFile" id="imageInput" accept="image/*" onchange="previewImage()" />
+                   <input type="text" id="imageText" required readonly/>
+                   <div id="previewContainer" style="margin-top: 10px;">
+                       <img id="imagePreview" style="max-width: 300px; display: none;" />
+                       <p id="confirm-textPreview"></p>
+                   </div>
+                   <button type="button" id="previewButton" onclick="previewImage()">Preview</button>
+                   <button type="button" id="uploadButton" style="display: none;" onclick="uploadImage()">Upload to Server</button>
+
+                   <button class="confirm_menu_add--stepbutton" onclick="step5AddMenuModal()">마지막</button>
                </form>
           </div>
         </section>
+
+       <section>
+           <div id="confirm_menu_add_process" class="menu-add-step">
+               <span class="close" onclick="closeAddMenuModal()">&times;</span>
+               <h1>확인해볼까요?</h1><br>
+               <div id="confirm-img" style="margin-top: 10px;">
+                   <img id="confirm-img-preview" style="max-width: 300px; display: none;" />
+                   <p id="textPreview"></p>
+               </div>
+
+               <h2>메뉴 이름 : <span id="menu-name-confirm-text"></span></h2>
+               <h2>메뉴 가격 : <span id="menu-price-confirm-text"></span></h2>
+               <h2>메뉴 설명 : <span id="menu-description-confirm-text"></span></h2>
+
+               <!-- 입력 필드 -->
+               <input type="hidden" id="menu-name-confirm-input" name="name">
+               <input type="hidden" id="menu-price-confirm-input" name="price">
+               <input type="hidden" id="menu-description-confirm-input" name="description">
+
+               <button class="confirm_menu_add--stepbutton" onclick="uploadMenu()">메뉴 추가</button>
+           </div>
+       </section>
    </div>
 
    <!--삭제 확인 모달, 관련 스크립 함수(openConfirmModal, closeConfirModal, confirmDelete)-->
@@ -134,29 +164,58 @@
         document.getElementById('menu-add-name').style.display = 'block';
     }
 
-    function step2AddmMenuModal() {
+    function step2AddMenuModal() {
         document.getElementById('menu-add-name').style.display = 'none';
         document.getElementById('menu-add-price').style.display = 'block';
     }
 
-    function step3AddmMenuModal() {
+    function step3AddMenuModal() {
         document.getElementById('menu-add-price').style.display = 'none';
         document.getElementById('menu-add-description').style.display = 'block';
     }
-    function step4AddmMenuModal() {
+    function step4AddMenuModal() {
         document.getElementById('menu-add-description').style.display = 'none';
         document.getElementById('menu-add-imgupload').style.display = 'block';
     }
-    function step5AddmMenuModal() {
-        deleteForm.submit();
+    function step5AddMenuModal() {
+        document.getElementById('menu-add-imgupload').style.display = 'none';
+
+        const confirmImgPreview = document.getElementById('confirm-img-preview');
+              const confirmTextPreview = document.getElementById('confirm-textPreview');
+              const textInput = document.getElementById('imageText');
+
+              if (imagePreview) {
+                    confirmImgPreview.src = imagePreview.src;
+                    confirmImgPreview.style.display = 'block';
+                    }
+                  confirmTextPreview.textContent = textInput.value;
+        const name = document.getElementById('menu-add-name-textarea').value;
+        const price = document.getElementById('menu-add-price-textarea').value;
+        const description = document.getElementById('menu-add-description-textarea').value;
+
+        //화면 표시용
+        document.getElementById('menu-name-confirm-text').innerText = name;
+        document.getElementById('menu-price-confirm-text').innerText = price;
+        document.getElementById('menu-description-confirm-text').innerText = description;
+
+        //서버 전송용
+        document.getElementById('menu-name-confirm-input').value = name;
+        document.getElementById('menu-price-confirm-input').value = price;
+        document.getElementById('menu-description-confirm-input').value = description;
+
+        document.getElementById('confirm_menu_add_process').style.display = 'block';
     }
+
     function closeAddMenuModal() {
         document.getElementById('menu_add_section').style.display = 'none';
         document.getElementById('menu-add-name').style.display = 'none';
         document.getElementById('menu-add-price').style.display = 'none';
         document.getElementById('menu-add-description').style.display = 'none';
         document.getElementById('menu-add-imgupload').style.display = 'none';
+        document.getElementById('confirm_menu_add_process').style.display = 'none';
       }
+
+
     /*관리자 페이지에는 일단 모달 생성, 메뉴 주문 스크립트는 일단 삭제, 아차피 수정,삭제가 주목적인데*/
     let deleteForm;
 
@@ -173,6 +232,95 @@
       function confirmDelete() {
         deleteForm.submit();
       }
+
+    //이미지 관련 스크립트
+    let selectedFile = null;
+    let imagePreview = null;
+    function previewImage() {
+        const imageInput = document.getElementById('imageInput');
+        imagePreview = document.getElementById('imagePreview');
+        const textInput = document.getElementById('imageText');
+        const textPreview = document.getElementById('textPreview');
+        const uploadButton = document.getElementById('uploadButton');
+
+        // 파일이 제대로 들어왔는지 확인
+        if (imageInput.files && imageInput.files[0]) {
+            selectedFile = imageInput.files[0];
+
+            //파일이름을 텍스트영역에 할당
+            textInput.value = selectedFile.name;
+
+            // 이미지 프리뷰 제공 스크립트
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+            };
+            reader.readAsDataURL(selectedFile);
+
+            // 이미지 이름 미리보기
+            textPreview.textContent = textInput.value;
+
+            // 업로드 버튼
+            uploadButton.style.display = 'inline-block';
+        } else {
+            alert('Please select an image first!');
+        }
+    }
+/*
+    function uploadImage() { //메뉴 추가에서 이미지를 서버에 업로드 용 로직
+          const imageInput = document.getElementById('imge_UploadForm');
+          const formData = new FormData();
+          formData.append('myFile', imageInput.files[0]);
+
+          fetch('/StoreImg_upload', {
+              method: 'POST',
+              body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.filename) {
+                  document.getElementById('image_url').value = data.filename;
+                  alert('이미지 업로드 완료!');
+              } else {
+                  alert('이미지 업로드 실패!');
+              }
+          })
+          .catch(error => console.error('업로드 오류:', error));
+      }*/
+
+    function uploadMenu() {
+        const formData = new FormData();
+        //const fileInput = document.getElementById('menu-img-confirm-input');
+        const fileInput = document.getElementById('imageInput');
+        const nameInput = document.getElementById('menu-name-confirm-input');
+        const priceInput = document.getElementById('menu-price-confirm-input');
+        const descInput = document.getElementById('menu-description-confirm-input');
+
+        formData.append('myFile', fileInput.files[0]);
+        formData.append('name', nameInput.value);
+        formData.append('price', priceInput.value);
+        formData.append('description', descInput.value);
+
+        fetch('/addToMenuInfo', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else {
+                    return response.text();
+                }
+            })
+            .then(data => {
+                if (data) console.log('서버 응답:', data);
+            })
+            .catch(error => {
+                console.error('업로드 실패:', error);
+            });
+    }
+
 </script>
 </body>
 </html>

@@ -14,21 +14,13 @@
       <!--<button class="back-btn">←</button>이거 어디쓸만하지않을까-->
       <h1>정보통신공학부 충북대 지점</h1>
       <div class="header-icons">
-        <button>🔗</button>
-        <button>🔍</button>
-        <button>🛒</button>
+        <p>테이블 번호 : <%= tableNum %></p>
       </div>
     </div>
   </header>
 
   <nav class="menu-tabs">
-    <p>테이블 번호 : <%= tableNum %></p>
-    <button>메뉴 찾기</button>
     <button class="active">추천 메뉴</button>
-    <button>신메뉴</button>
-    <button>bhc 세트</button>
-    <button>뿌링클</button>
-    <p>버튼은 아직 작동 x</p>
   </nav>
 
   <main class="menu-list">
@@ -96,6 +88,7 @@
     let selectedMenu = '';//선택한 메뉴 이름 저장
     let selectedMenuPrice = 0;
     function openModal(id, name, price, description) {
+        document.getElementById('myModal').style.display = 'block';
         selectedMenu=name;
         selectedMenuPrice = parseInt(price, 10); // 가격을 정수로 변환
         document.getElementById('modal-menu-name').textContent = name;
@@ -121,6 +114,10 @@
                 });
     }
 
+    //모달 외부 클릭 시 모달이 닫힘
+    myModal.addEventListener('click', function() {
+            closeModal();
+    });
     function closeModal() {
         document.getElementById('myModal').style.display = 'none';
     }
