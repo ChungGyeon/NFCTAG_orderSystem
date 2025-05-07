@@ -119,16 +119,31 @@
     color: #666;
   }
 
-  /* 관리자용 메뉴 삭제 버튼 css*/
-
-  .moding_menu_button_label {
+  /* 관리자용 옵션추가, 메뉴 삭제 버튼 css*/
+  .moding_menu_button_addiMenu_label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    color: lightskyblue;
+  }
+  .moding_menu_button_delete_label {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-top: 10px;
     color: red;
   }
-  .moding_menu_button {
+  .moding_menu_addiMenu_button {
+    width: 100px;
+    height: 50px;
+    border-radius: 6px;
+    font-weight: bold;
+    margin-left: auto;
+    background-color: lightskyblue;
+    cursor: pointer;
+  }
+  .moding_menu_delete_button {
        width: 100px;
        height: 50px;
        border-radius: 6px;

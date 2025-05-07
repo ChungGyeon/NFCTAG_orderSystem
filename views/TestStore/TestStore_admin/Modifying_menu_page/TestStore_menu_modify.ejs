@@ -40,9 +40,13 @@
             <h2><%= item.name %></h2>
             <p class="price"><%= item.price %>원</p>
             <p class="review"><%= item.description %></p>
-            <form class="moding_menu_button_label" action = '/admin_addel' method="POST" onsubmit="event.preventDefault(); openConfirmModal(this);">
+            <form class="moding_menu_button_addiMenu_label" action ='/추가메뉴 거시기로' method="POST" onsubmit="아직함수는 구현x;">
                     <input type="hidden" name="id" value="<%= item.id %>">
-                    <button class="moding_menu_button" type="submit">삭제</button>
+                    <button class="moding_menu_addiMenu_button" type="submit">메뉴 옵션</button>
+            </form>
+            <form class="moding_menu_button_delete_label" action = '/admin_addel' method="POST" onsubmit="event.preventDefault(); openConfirmModal(this);">
+                    <input type="hidden" name="id" value="<%= item.id %>">
+                    <button class="moding_menu_delete_button" type="submit">삭제</button>
             </form>
           </div>
             <img class="menu-img" src="/test_img_upload/<%= item.image_url %>" alt="<%= item.name %>">
@@ -140,8 +144,8 @@
         </div>
     </section>
 
-     <!--모달 관련 코드-->
-      <div id="myModal" class="modal">
+     <!--추가메뉴 관련 모달-->
+      <div id="additionalMenu_section" class="modal">
         <div class="modal-content">
           <span class="close" onclick="closeModal()">&times;</span>
           <h2 id="modal-menu-name"></h2>
