@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>TagOrder 테스트 페이지</title>
+    <link href="/TestStore/TestStore_admin/Order_related_page/testStorescss.css" rel="stylesheet">
+    <script defer src="/TestStore/TestStore_admin/Order_related_page/test_js.js"></script>
+</head>
+<body>
+<div class="test-container">
+    <header>
+        <h1>TagOrder</h1>
+    </header>
+    <main id="main-content">
+        <% orders.forEach(order => { %>
+        <!--data-table은 손님쪽에서 id를 구현 후 제작해야해-->
+        <div class="table-card" data-table="<%= order.tableNum %>" data-total="<%= order.totalPrice %>">
+            <h3>테이블 <%= order.tableNum %></h3>
+            <ul>
+                <li>
+                    <h2>메뉴: <%= order.menu %></h2>
+                    <p>옵션: <%= order.options.map(option => option.name).join(', ') %></p>
+                    <p>총 결제금액: <%= order.totalPrice %>원</p>
+                </li>
+            </ul>
+            <label><input type="checkbox" class="table-check"> 정산 대상 선택</label>
+        </div>
+        <% }) %>
+    </main>
+    <aside>
+        <!--아래 세 개 버튼의 온클릭은 따로 함수 제작 필요 25.4.29-->
+        <button class="aside adjust-button" onclick="calculateForMenu()">정산하기</button>
+        <button class="aside adjust-button-cancelVer" onclick="calculateForMenutest()">취소하기</button>
+        <button class="aside adjust-button-cancelVer" onclick="calculateForMenutest()">이전 정산 기록 확인</button>
+    </aside>
+</div>
+
+<div id="settle-modal" class="modal-overlay">
+    <div class="modal-content">
+        <h2>정산 결과</h2>
+        <div id="settle-result"></div>
+        <button onclick="closeModal()">닫기</button>
+    </div>
+</div>
+</body>
+</html>

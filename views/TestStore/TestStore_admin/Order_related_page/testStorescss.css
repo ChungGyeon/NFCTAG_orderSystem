@@ -1,0 +1,169 @@
+* {
+    box-sizing: border-box;
+}
+body, html {
+    margin: 0;
+    padding: 0;
+}
+.test-container {
+    display: grid;
+    width: 100vw;
+    height: 100vh;
+    grid-template-rows: 100px 1fr 100px;
+    grid-template-columns: 250px 1fr 1fr;
+    grid-template-areas:
+        "header header header"
+        "aside   main    main"
+        "aside   main  main";
+}
+header {
+    grid-area: header;
+    background-color: #f0f0f0;
+    text-align: center;
+    padding: 20px;
+}
+main {
+    grid-area: main;
+    background-color: #e0e0e0;
+    padding: 20px;
+    overflow: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+aside {
+    grid-area: aside;
+    background-color: #d0d0d0;
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr;
+}
+
+
+
+ /*이 아래는 세부 요소들 css*/
+ /* 이 버튼을 아래의 버튼으로 대체함
+.settle-button {
+    display: block;
+    margin-top: 15px;
+    padding: 12px 20px;
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+}
+.settle-button:hover {
+    background-color: #388E3C;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}*/
+
+aside adjustment-button {
+    display: block;
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-size: 48px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+}
+
+aside adjustment-button:hover {
+    background-color: #388E3C;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+
+/*주문 취소버튼 잘못 주문한 고객의 주문 취소 기능*/
+aside adjustment-button-cancelVer {
+    display: block;
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-size: 48px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+}
+
+aside adjustment-button-cancelVer:hover {
+    background-color: #388E3C;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/*이전 정산기록들 확인하는 버튼*/
+aside adjustment-button-caluelate-logVer {
+    display: block;
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-size: 48px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+}
+
+aside adjustment-button-caluelate-logVer:hover {
+    background-color: #388E3C;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.table-card {
+    width: 250px;
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+.table-card h3 {
+    margin-top: 0;
+}
+.table-card ul {
+    padding-left: 20px;
+    margin: 10px 0;
+}
+.table-card label {
+    display: block;
+    margin-top: 10px;
+}
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 999;
+    justify-content: center;
+    align-items: center;
+}
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    width: 500px;
+    max-width: 90%;
+    text-align: left;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+.modal-content button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #777;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.modal-content button:hover {
+    background-color: #555;
+}

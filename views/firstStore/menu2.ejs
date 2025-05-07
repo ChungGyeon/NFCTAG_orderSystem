@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>테스트 상점</title>
+  <link rel="stylesheet" href="forMenu2.css">
+</head>
+<body>
+  <header class="header">
+    <div class="top-bar">
+    </div>
+    <div class="store-info">
+      <!--<button class="back-btn">←</button>이거 어디쓸만하지않을까-->
+      <h1>정보통신공학부 충북대 지점</h1>
+      <div class="header-icons">
+        <p>테이블 번호 : <%= tableNum %></p>
+      </div>
+    </div>
+  </header>
+
+  <nav class="menu-tabs">
+    <button class="active">추천 메뉴</button>
+  </nav>
+
+  <main class="menu-list">
+    <section class="menu-item">
+      <div class="menu-info">
+        <% items.forEach(item => { %>
+          <div class="menu-container" onclick="openModal(<%= item.id %>, '<%= item.name %>', '<%= item.price %>', '<%= item.description %>')">
+            <div class="menu-details">
+            <h2><%= item.name %></h2>
+            <p class="price"><%= item.price %>원</p>
+            <p class="review"><%= item.description %></p>
+          </div>
+            <img class="menu-img" src="/test_img_upload/<%= item.image_url %>" alt="<%= item.name %>">
+          </div>
+        <% }) %>
+      </div>
+    </section>
+    
+     <!--모달 관련 코드-->
+      <div id="myModal" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="closeModal()">&times;</span>
+          <h2 id="modal-menu-name"></h2>
+          <p id="modal-price"></p>
+          <p id="modal-description"></p>
+          <br>
+          <div id="modal-options"></div>
+          <br>
+          <button class="DoSendOrderButton" onclick="DoSendOrder()">주문 하기</button>
+        </div>
+      </div>
+
+
+    <section class="menu-item">
+      <div class="menu-info">
+        <h2>HOT후라이드</h2>
+        <p>명불허전 바삭함, 고소함 가득 매콤하게 튀긴...</p>
+        <p class="price">21,000원</p>
+        <p class="review">리뷰 23개</p>
+      </div>
+    </section>
+
+    <section class="menu-item">
+      <div class="menu-info">
+        <h2>HOT골드킹</h2>
+        <p>bhc만의 속성된 소스로 매콤, 달콤, 짭조름...</p>
+        <p class="price">21,000원</p>
+        <p class="review">리뷰 2개</p>
+      </div>
+    </section>
+
+    <section class="menu-item">
+      <div class="menu-info">
+        <h2>HOT골드킹 콤보</h2>
+        <p>[윙/봉/닭다리 5조각씩 제공] bhc만의 속성...</p>
+        <p class="price">24,000원</p>
+        <p class="review">리뷰 4개</p>
+      </div>
+    </section>
+  </main>
+  
+  
+  <!--모달 관련 스크립트, 나중에 js파일로 따로 빼놓을 것-->
+  <script>
+    let selectedMenu = '';//선택한 메뉴 이름 저장
+    let selectedMenuPrice = 0;
+    function openModal(id, name, price, description) {
+        document.getElementById('myModal').style.display = 'block';
+        selectedMenu=name;
+        selectedMenuPrice = parseInt(price, 10); // 가격을 정수로 변환
+        document.getElementById('modal-menu-name').textContent = name;
+        document.getElementById('modal-price').textContent = price + '원';
+        document.getElementById('modal-description').textContent = description;
+        document.getElementById('myModal').style.display = 'block';
+
+        // 모달을 열면 그 메뉴에 맞는 옵션들을 가져옴
+            fetch(`/getMenuOptions?id=${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('옵션 데이터:', data.options);
+                    const optionsContainer = document.getElementById('modal-options');
+                    optionsContainer.innerHTML = ''; // 이전옵션을 초기화
+                    data.options.forEach(option => {
+                        const label = document.createElement('label');
+                        label.innerHTML = `<p class="modal-selection"><input type="checkbox" id="option-${option.id}" data-price="${option.additional_price}">${option.name} (${option.additional_price}원)</p>`;
+                        optionsContainer.appendChild(label);
+                    });
+                })
+                .catch(error => {
+                    console.error('추가옵션을 가져오는데 실패하였습니다. :', error);
+                });
+    }
+
+    //모달 외부 클릭 시 모달이 닫힘
+    myModal.addEventListener('click', function() {
+            closeModal();
+    });
+    function closeModal() {
+        document.getElementById('myModal').style.display = 'none';
+    }
+  
+    function DoSendOrder(name) {
+        const tableNum= <%= tableNum %>; //테이블 번호를 받아옴
+        const selectedOptions = [];
+        let totalPrice = selectedMenuPrice;
+        document.querySelectorAll('#modal-options input[type="checkbox"]:checked').forEach(checkbox => {
+                const optionId = checkbox.id.replace('option-', ''); // ID 추출
+                const optionName = checkbox.parentElement.textContent.trim(); // 이름 추출
+                const optionPrice = parseInt(checkbox.getAttribute('data-price'), 10); // 가격 추출
+                totalPrice += optionPrice; // 가격 합산
+                selectedOptions.push({ id: optionId, name: optionName, price: optionPrice });
+
+            });
+            fetch('/DoSendOrder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json' //HTTP의 요청이 JSON형식임을 알리는 헤더
+                },
+
+                body: JSON.stringify({ menu: selectedMenu, options: selectedOptions, totalPrice: totalPrice, tableNum: tableNum })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('주문이 완료되었습니다. \n총 가격 : ' + totalPrice + '원');
+                    closeModal();
+                } else {
+                    alert('죄송해요! 주문하신 내용을 전달하던 중 사고가 났습니다 ㅠㅠ \n 다시 주문하면 실패하지 않을게요!');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('주문에 실패했습니다.');
+            });
+        }
+
+
+</script>
+</body>
+</html>

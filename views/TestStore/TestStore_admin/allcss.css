@@ -1,0 +1,83 @@
+body {
+    font-family: 'Nunito', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #e0f7fa;
+    color: #00796b;
+
+}
+
+
+.menu_container { /*메뉴 칸*/
+    text-align: center;
+    background-color: #ffffff;
+    width: 150px;
+    height: 300px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+.menu_container:hover {
+    transform: scale(1.05);
+}
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    transition: opacity 0.5s ease;
+}
+.button-menu_container {
+    display: flex;
+    gap: 10px;
+}
+button {
+    padding: 12px 24px;
+    font-size: 16px;
+    color: #ffffff;
+    background-color: #e0f7fa;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+button:hover {
+    background-color: #004d40;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+
+
+
+
+.grid-container { 
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3개의 열로 배치 */
+    grid-gap: 50px;
+}
+.box {
+    border: 2px solid black;
+    width: 150px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+
+/*menu에서 가져온거*/
+.menu-item {
+    display: inline-block;
+    text-align: center;
+    margin: 15px;
+}
+
+.menu-item img {
+    width: 150px;
+    height: 150px;
+    cursor: pointer;
+}

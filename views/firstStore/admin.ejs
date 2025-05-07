@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TagOrder 주문관리</title>
+  <script src="test_js.js"></script>
+  <link href="./allcss.css" rel="stylesheet">
+</head>
+<body>
+  <div class="grid-container">
+    <% items1.forEach(item => { %>
+      <div class="menu_container">
+        <p><%= item.id %></p>
+        <h2><%= item.name %></h2>
+        <img src="<%= item.image_url %>" alt="<%= item.name %>">
+        <p>Price: $<%= item.price %></p>
+        <p><%= item.description %></p>
+        <form action = '/admin_addel' method="POST">
+          <input type="hidden" name="id" value="<%= item.id %>">
+          <button type="submit">메뉴 삭제</button>
+        </form>
+      </div>
+    <% }) %>
+  </div> 
+  
+  <br>
+  
+  <div><h1>메뉴 추가</h1>
+  <form action="/admin_adTomenu" method="POST">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required><br>
+
+    <label for="image_url">이미지 파일명:</label>
+    <input type="text" id="image_url" name="image_url" readonly><br>
+
+    <label for="price">Price:</label>
+    <input type="number" id="price" name="price" step="0.01" required><br>
+
+    <label for="description">Description:</label>
+    <textarea id="description" name="description" required></textarea><br>
+
+    <button type="submit">Add Item</button>
+    </form>
+
+    <div>
+      <h1>메뉴 추가 이미지 업로드</h1>
+      <form id="imge_UploadForm" action="/Storeimg_upload" method="POST" enctype="multipart/form-data">
+        <input type="file" name="myFile" />
+        <button type="submit">Upload</button>
+    </form>
+    </div>
+
+    <div class="Additional_option_container">
+      <h1>추가 옵션</h1>
+      <form id="option_imge_UploadForm" action="/admin_adTooption" method="POST" onsubmit="OptionUploadImage(); return false;">
+        <label for="menu_id">옵션 추가할 메뉴의 id:</label>
+        <input type="text" id="menu_id" name="menu_id" required>
+        <label for="name">옵션 이름:</label>
+        <input type="text" id="name" name="name" required><br>
+        <label for="additional_price">옵션 가격:</label>
+        <input type="number" id="additional_price" name="additional_price" step="1" required><br>
+        <label for="description">옵션 설명:</label>
+        <textarea id="description" name="description" required></textarea><br><br>
+        <button type="submit">Add Option</button>
+      </form>
+</div>
+<!--아래 스크립트는 나중에 js파일로 빼놓을 것-->
+<script>
+  function uploadImage() { //메뉴 추가에서 이미지를 서버에 업로드 용 로직
+      const imageInput = document.getElementById('imge_UploadForm');
+      const formData = new FormData();
+      formData.append('myFile', imageInput.files[0]);
+  
+      fetch('/StoreImg_upload', {
+          method: 'POST',
+          body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.filename) {
+              document.getElementById('image_url').value = data.filename;
+              alert('이미지 업로드 완료!');
+          } else {
+              alert('이미지 업로드 실패!');
+          }
+      })
+      .catch(error => console.error('업로드 오류:', error));
+  }
+    
+  //이미지 업로드 시 자동으로 이미지 파일명을 입력해주는 기능
+  function getQueryParam(param) { 
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const filename = getQueryParam('filename');
+            if (filename) {
+                document.getElementById('image_url').value = filename;
+            }
+        });
+
+/* 메뉴 추가 옵션 이미지 기능은 일단 보류하자,이유는 없는게 더 간단해 보여서?
+  //옵션 이미지 업로드
+  function OptionUploadImage() { //메뉴 추가에서 이미지를 서버에 업로드 용 로직
+        const imageInput = document.getElementById('option_imge_UploadForm');
+        const formData = new FormData();
+        formData.append('myFile', imageInput.files[0]);
+
+        fetch('/option_StoreImg_upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.filename) {
+                document.getElementById('option_image_url').value = data.filename;
+                alert('이미지 업로드 완료!');
+            } else {
+                alert('이미지 업로드 실패!');
+            }
+        })
+        .catch(error => console.error('업로드 오류:', error));
+    }
+
+    //옵션 이미지 업로드 시 자동으로 이미지 파일명을 입력해주는 기능
+    function OPgetQueryParam(param) {
+              const urlParams = new URLSearchParams(window.location.search);
+              return urlParams.get(param);
+          }
+
+          document.addEventListener('DOMContentLoaded', () => {
+              const filename = getQueryParam('filename');
+              if (filename) {
+                  document.getElementById('option_image_url').value = filename;
+              }
+          });
+*/
+  </script>
+</body>
+</html>

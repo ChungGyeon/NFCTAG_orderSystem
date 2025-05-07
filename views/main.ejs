@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>태그오더</title>
+</head>
+<body>
+<header>
+    <h1>잠시만 기다려주세요!</h1>
+</header>
+<main>
+    <p>매장 반경 50m 이내 확인 중입니다. 잠시만 기다려주세요.</p>
+    <script>
+        const TestConnect = <%= JSON.stringify(TestPageConnect) %>;
+        const tableNum = <%= tableNum %>;
+            navigator.geolocation.getCurrentPosition(success, error);
+
+            function success(position) {
+                const userLat = position.coords.latitude;
+                const userLng = position.coords.longitude;
+
+                fetch('/verifyLocation', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        lat: userLat,
+                        lng: userLng,
+                        store: 'firstStore'
+                    })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.allowed) {
+                            window.location.href = `/firstStore/menu2?tableNum=${encodeURIComponent(tableNum)}`;
+                        } else {
+                            alert("현재 위치가 반경 50m 밖입니다.\n접속이 제한됩니다.");
+                        }
+                    })
+                    .catch(err => {
+                        console.error("요청 실패:", err);
+                        alert("서버 통신 오류 발생");
+                    });
+            }
+
+            function error() {
+                alert("위치 정보를 가져올 수 없습니다. 위치 권한을 허용해 주세요.");
+            }
+    </script>
+</main>
+<footer>
+    <p>&copy; 2024 Graduation Project</p>
+</footer>
+</body>
+</html>
