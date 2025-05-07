@@ -165,11 +165,8 @@
            <div id="additionalMenu_modal" class="additionalMenu_modal_section">
                <!--이 x버튼은 특별히 전 단계로 돌아가는 것으로 만듦-->
                <span class="close" onclick="document.getElementById('additionalMenu_modal').style.display = 'none';">&times;</span>
-               <form id="option_imge_UploadForm" action="/admin_adTooption" method="POST">
-                   <!--여기에 현재 메뉴의 이름과, 히든으로 id를 가져오는걸 구현해야되네
-                   <label for="menu_id">옵션 추가할 메뉴의 id:</label>
-                   <input type="text" id="menu_id" name="menu_id" required><br>-->
-                   <input type="hidden" id="targetOfAdditionalMenu_id" readonly/>
+               <form id="option_imge_UploadForm" action="/test_adTooption" method="POST">
+                   <input type="hidden" name="targetOfAdditionalMenu_id" id="targetOfAdditionalMenu_id"/>
                    <H2>선택한 메뉴 :</H2><H1 id="MenuName"></H1><br>
                    <label for="name">설정할 옵션 이름:</label>
                    <input type="text" id="name" name="name" required><br><br>
@@ -179,6 +176,20 @@
                    <textarea id="description" name="description" required></textarea><br><br>
                    <button type="submit">Add Option</button>
                </form>
+
+               <!--
+        <form id="option_imge_UploadForm" action="/admin_adTooption" method="POST" onsubmit="OptionUploadImage(); return false;">
+        <label for="menu_id">옵션 추가할 메뉴의 id:</label>
+        <input type="text" id="menu_id" name="menu_id" required>
+        <label for="name">옵션 이름:</label>
+        <input type="text" id="name" name="name" required><br>
+        <label for="additional_price">옵션 가격:</label>
+        <input type="number" id="additional_price" name="additional_price" step="1" required><br>
+        <label for="description">옵션 설명:</label>
+        <textarea id="description" name="description" required></textarea><br><br>
+        <button type="submit">Add Option</button>
+      </form>
+               -->
            </div>
        </section>
       </div>
