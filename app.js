@@ -146,7 +146,7 @@ app.post('/admin_adTomenu', (req, res) => {
 });
 
 
-// post방식 admin_adTooption /버튼으로 추가하기
+// firstStore admin 페이지 용 옵션전달
 app.post('/admin_adTooption', (req, res) => {
     const { menu_id, name, additional_price, description} = req.body;
 
@@ -160,6 +160,22 @@ app.post('/admin_adTooption', (req, res) => {
         res.redirect('/firstStore/admin'); // 성공 후 관리자 페이지로 이동
     });
 });
+
+//TestStore modifying_menu_page 용 옵션전달
+app.post('/test_adTooption', (req, res) => {
+    const { targetOfAdditionalMenu_id: menu_id, name, additional_price, description} = req.body;
+
+    const sql = 'INSERT INTO menu_option (menu_id, name, additional_price, description) VALUES (?, ?, ?, ?)';
+    db.query(sql, [menu_id, name, additional_price, description], (err, result) => {
+        if (err) {
+            console.error('옵션 추가 실패:', err);
+            return res.status(500).send('옵션 추가 실패');
+        }
+        console.log('옵션 추가 성공:', result);
+        res.redirect('/TestStore/TestStore_admin/Modifying_menu_page/TestStore_menu_modify'); // 성공 후 관리자 페이지로 이동
+    });
+});
+
 
 //흠..이건 메뉴 옵션을 불러오는 코드
 //modal test랑 합칠때 쓰면 될
