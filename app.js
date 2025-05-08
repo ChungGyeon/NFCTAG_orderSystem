@@ -3,7 +3,6 @@ const session = require('express-session');
 const mysql = require('mysql');
 const path = require('path');
 const multer  = require('multer')
-//const cors = require('cors'); // ⭐ 추가 (ngrok 등 외부 요청 허용용)
 
 let testPageConnect = false; // db연결 안되면 자동으로 test.ejs열리게 설정
 //const upload = multer({ dest: 'test_img_upload/' }) //multer를 사용해 이미지 저장할 경로,테스트용임
@@ -35,7 +34,6 @@ app.set('view engine', 'ejs');
 app.set('views', './views'); // 뷰 파일 디렉토리 설정
 app.use(bodyParser.urlencoded({ extended: true })); //url인코딩 데이터 파싱
 app.use(bodyParser.json()); // json 데이터 파싱
-//app.use(cors()); //외부 서버(뭐 제공해주는거 있잖어)에 접근 허용하는 미들웨어
 app.use(session({ // 세션 설정
     secret: 'tagorder-secret-key',
     resave: false,
