@@ -109,7 +109,7 @@ db.connect((err) => {
 });
 
 
-// ✅ 위치 인증 라우트
+// ✅ 위치 인증 라우트 근데 1이랑 2랑 다른게 뭔지 모르겠는디
 app.post('/verifyLocation2', (req, res) => {
     const { lat, lng, store } = req.body;
     const storeGPS = storeLocations[store];
@@ -142,7 +142,7 @@ app.post('/verifyLocation', (req, res) => {
     }
 });
 
-// ✅ 가게 GPS 저장 라우트
+//가게 GPS 저장 라우트 아마 sql연동될때 사용하는 위치 저장 라우터
 app.post('/saveStoreLocation2', (req, res) => {
     const { store, lat, lng } = req.body;
     if (!store || !lat || !lng) {
