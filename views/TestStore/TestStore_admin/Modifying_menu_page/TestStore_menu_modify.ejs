@@ -263,6 +263,7 @@
         deleteForm.submit();
       }
 
+
     //이미지 관련 스크립트
     let selectedFile = null;
     let imagePreview = null;
@@ -372,6 +373,34 @@
         document.getElementById('targetOfAdditionalMenu_id').value = id;
         document.getElementById('MenuName').textContent=menuName;
     }
+
+    function deleteAdditional_menu(){
+        const formData = new FormData();
+        const menuId = document.getElementById('menu_id').value;
+        formData.append('myFile', fileInput.files[0]);
+        formData.append('name', nameInput.value);
+        formData.append('price', priceInput.value);
+        formData.append('description', descInput.value);
+
+        fetch('/addToMenuInfo', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else {
+                    return response.text();
+                }
+            })
+            .then(data => {
+                if (data) console.log('서버 응답:', data);
+            })
+            .catch(error => {
+                console.error('업로드 실패:', error);
+            });
+    }
+
 
 </script>
 </body>
