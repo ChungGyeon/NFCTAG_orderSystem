@@ -3,6 +3,7 @@ const session = require('express-session');
 const mysql = require('mysql');
 const path = require('path');
 const multer  = require('multer')
+const cors = require('cors'); // ⭐ 추가 (ngrok 등 외부 요청 허용용)
 
 let testPageConnect = false; // db연결 안되면 자동으로 test.ejs열리게 설정
 //const upload = multer({ dest: 'test_img_upload/' }) //multer를 사용해 이미지 저장할 경로,테스트용임
@@ -34,7 +35,30 @@ app.set('view engine', 'ejs');
 app.set('views', './views'); // 뷰 파일 디렉토리 설정
 app.use(bodyParser.urlencoded({ extended: true })); //url인코딩 데이터 파싱
 app.use(bodyParser.json()); // json 데이터 파싱
+app.use(cors()); //gps 연결을 위한 cors 설정
+app.use(session({ // 세션 설정
+    secret: 'tagorder-secret-key',
+    resave: false,
+    saveUninitialized: false
+}));
 
+//gps 설정 관련, gps라우터는  112 line부터
+//메모리 저장용 (기본 위치)
+const storeLocations = {
+    firstStore: { lat: 36.625688, lng: 127.465233 },
+};
+
+function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
+    const R = 6371000;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) ** 2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+}
 
 //39~74 line : db 접속코드
 require('dotenv').config();
@@ -85,17 +109,103 @@ db.connect((err) => {
 });
 
 
-// 기본 경로 : 상점 접속을 위한 페이지 로드용, 일단 이런식으로 밖에 못고치겠어
+// ✅ 위치 인증 라우트
+app.post('/verifyLocation2', (req, res) => {
+    const { lat, lng, store } = req.body;
+    const storeGPS = storeLocations[store];
+    if (!storeGPS) return res.json({ allowed: false });
+
+    const distance = getDistanceFromLatLonInMeters(lat, lng, storeGPS.lat, storeGPS.lng);
+    console.log(`[위치인증] ${distance.toFixed(2)}m 거리`);
+
+    if (distance <= 50) {
+        req.session.locationVerified = true;
+        res.json({ allowed: true });
+    } else {
+        res.json({ allowed: false });
+    }
+});
+
+app.post('/verifyLocation', (req, res) => {
+    const { lat, lng, store } = req.body;
+    const storeGPS = storeLocations[store];
+    if (!storeGPS) return res.json({ allowed: false });
+
+    const distance = getDistanceFromLatLonInMeters(lat, lng, storeGPS.lat, storeGPS.lng);
+    console.log(`${store} 위치 확인 거리: ${distance.toFixed(2)}m`);
+
+    if (distance <= 50) {
+        req.session.locationVerified = true;
+        res.json({ allowed: true });
+    } else {
+        res.json({ allowed: false });
+    }
+});
+
+// ✅ 가게 GPS 저장 라우트
+app.post('/saveStoreLocation2', (req, res) => {
+    const { store, lat, lng } = req.body;
+    if (!store || !lat || !lng) {
+        return res.status(400).json({ success: false, message: "요청 정보 누락" });
+    }
+
+    const sql = `
+        INSERT INTO store_location (store_id, latitude, longitude)
+        VALUES (?, ?, ?)
+        ON DUPLICATE KEY UPDATE latitude = ?, longitude = ?, updated_at = NOW()
+    `;
+
+    db.query(sql, [store, lat, lng, lat, lng], (err, result) => {
+        if (err) {
+            console.error('[DB] 위치 저장 실패:', err);
+            return res.status(500).json({ success: false, message: 'DB 저장 실패' });
+        }
+
+        storeLocations[store] = { lat: parseFloat(lat), lng: parseFloat(lng) }; // 메모리에도 저장
+        console.log(`✅ [${store}] 위치 DB 저장 완료 → ${lat}, ${lng}`);
+        return res.json({ success: true });
+    });
+});
+//gps 위치 저장 처리
+app.post('/saveStoreLocation', (req, res) => {
+    const { store, lat, lng } = req.body;
+
+    if (!store || !lat || !lng) {
+        return res.status(400).json({ success: false, message: "요청 정보 누락" });
+    }
+
+    // ✅ 메모리에 저장 (DB는 사용하지 않음)
+    storeLocations[store] = {
+        lat: parseFloat(lat),
+        lng: parseFloat(lng)
+    };
+
+    console.log(`✅ [${store}] 위치 메모리 저장 완료 → 위도: ${lat}, 경도: ${lng}`);
+    return res.json({ success: true });
+});
+
+
+
+// 기본 경로 : 이젠 main페이지가 고객이 접근시 gps인증 라우터로 날려주고, 개발자(db연결 안될때)는 이전 그대로 test.ejs로 날려줌
 app.get('/', (req, res) => { // 주소?table_num=1 같은 형식으로 넘어올거야
     const table_num= req.query.tableNum;
     res.render('main', {TestPageConnect: testPageConnect, tableNum: table_num});// main으로 최초접근 후 다른 곳으로 이동하는 용}
 });
+//firstStore 주문 페이지 접근 라우터 (GPS 인증 필수)
+app.get('/firstStore/menu2', (req, res) => {
+    if (!req.session.locationVerified) {
+        return res.status(403).send("🚫 위치 인증이 필요합니다.");
+    }
 
-/*
-태그마다 id 구현
-태그마다 1,2,3,4,5와 같은 아이디를 지닌 주소를 nfc태그에 부여하고 그걸 토대로 테이블 번호를 지정하는 방식이 어떨까
-
-*/
+    const tableNum = req.query.tableNum;
+    db.query('SELECT * FROM menu', (err, results) => {
+        if (err) {
+            console.error('쿼리 실패:', err);
+            return res.status(500).send('DB 오류');
+        }
+        res.render('firstStore/menu2', { items: results, tableNum });
+    });
+});
 
 //60~177line firstStore 관리자 페이지
 app.get('/firstStore/admin', (req, res) => {
