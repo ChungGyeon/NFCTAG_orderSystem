@@ -29,13 +29,13 @@
                     const userLat = position.coords.latitude;
                     const userLng = position.coords.longitude;
 
-                    fetch('/verifyLocation', {
+                    fetch('/verifyLocation2', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
+                            store: 1, //!!!!!!!!!!!!!!!!!!!!!!!!!25.05.09 임시로 1로 설정, 나중에 sql에서 가져와야함
                             lat: userLat,
                             lng: userLng,
-                            store: 'firstStore'
                         })
                     })
                         .then(res => res.json())
