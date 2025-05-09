@@ -114,9 +114,11 @@
                 });
     }
 
-    //모달 외부 클릭 시 모달이 닫힘
-    myModal.addEventListener('click', function() {
-            closeModal();
+    //모달 외부 클릭 시 모달이 닫힘, 이벤트 참 봐도봐도 모르겠단 말이지, 고마워 gpt야~
+    myModal.addEventListener('click', function(event) {
+            if (event.target==this){
+              closeModal();
+            }
     });
     function closeModal() {
         document.getElementById('myModal').style.display = 'none';
