@@ -116,22 +116,36 @@ db.connect((err) => {
 });
 
 
-// ✅ 위치 인증 라우트 근데 1이랑 2랑 다른게 뭔지 모르겠는디
+// ✅ 위치 인증 라우트
 app.post('/verifyLocation2', (req, res) => {
-    const { lat, lng, store } = req.body;
-    const storeGPS = storeLocations[store];
-    if (!storeGPS) return res.json({ allowed: false });
+    const { store, lat, lng } = req.body;
+    const sql = `SELECT latitude, longitude FROM store_location WHERE store_id = ?`;
 
-    const distance = getDistanceFromLatLonInMeters(lat, lng, storeGPS.lat, storeGPS.lng);
-    console.log(`[위치인증] ${distance.toFixed(2)}m 거리`);
+    db.query(sql, [store], (err, result) => {
+        if (err) {
+            console.error('식당 ID 전송 실패:', err);
+            return res.status(500).json({ allowed: false, message: 'DB 오류 - 삭당 ID 전송' });
+        }
 
-    if (distance <= 50) {
-        req.session.locationVerified = true;
-        res.json({ allowed: true });
-    } else {
-        res.json({ allowed: false });
-    }
+        if (result.length === 0) {
+            return res.json({ allowed: false, message: '매장 정보 없음' });
+        }
+
+        const storeLat = result[0].latitude;
+        const storeLng = result[0].longitude;
+
+        const distance = getDistanceFromLatLonInMeters(lat, lng, storeLat, storeLng);
+        console.log(`[위치인증] ${distance.toFixed(2)}m 거리`);
+
+        if (distance <= 50) {
+            req.session.locationVerified = true;
+            res.json({ allowed: true });
+        } else {
+            res.json({ allowed: false });
+        }
+    });
 });
+
 
 app.post('/verifyLocation', (req, res) => {
     const { lat, lng, store } = req.body;
