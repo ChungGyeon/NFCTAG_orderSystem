@@ -8,6 +8,7 @@
 </head>
 <body>
     <!--단순히 정산, 메뉴관리 이동 스크립트, GET방식으로 보냄, 관련 nodejs는 254~259-->
+  <input type="hidden" id="storeId" value=1><!--25.05.09 gps랑 sql연동을 위한 임시 id 부여, 추후엔 이거 어디서 만들고 가져올지 고민해야해-->
   <div class="grid-container">
    <form class="menu_container" action="/TestStore/TestStore_admin/Order_related_page/test" method="GET">
        <button type="submit">
@@ -29,6 +30,7 @@
     <!-- ✅ 위치 저장 스크립트 추가 -->
     <script>
         function saveStoreLocation() {
+
             if (!navigator.geolocation) {
                 alert("브라우저가 위치 정보를 지원하지 않습니다.");
                 return;
@@ -36,16 +38,17 @@
 
             navigator.geolocation.getCurrentPosition(
                 (position) => {
+                    const store_id = document.getElementById('storeId').value;
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
 
-                    fetch('/saveStoreLocation', {
+                    fetch('/saveStoreLocation2', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            store: 'firstStore',  // 필요 시 수정
+                            store: store_id,  // 필요 시 수정
                             lat: lat,
                             lng: lng
                         })
