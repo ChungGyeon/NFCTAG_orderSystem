@@ -45,11 +45,11 @@ app.use(session({ // 세션 설정
 }));
 
 //ssl관련, 작동 안되면은 47~51라인 주석 처리 후, 540~545라인 주석 해제, 그 아래 내용은 주석처리
-/*
+
 const options = {
   key: fs.readFileSync(process.env.TAGORDER_PRIBUSY_SSL_PATH),
   cert: fs.readFileSync(process.env.TAGORDER_CA_SSL_PATH)
-};*/
+};
 //gps 설정 관련, gps라우터는  112 line부터
 //메모리 저장용 (기본 위치)
 const storeLocations = {
@@ -538,13 +538,13 @@ app.get('/TestStore/TestStore_admin/Modifying_menu_page/TestStore_menu_modify', 
 
 
 //서버 실행화면 확인
-
+/*
 const SubpoRt = 3001;
 app.listen(SubpoRt, () => {
     console.log(`서버가 ${SubpoRt} 실행됩니다.`);
 });
+*/
 
-/*
 http.createServer((req, res) => {
   res.writeHead(301, { "Location": "https://" + req.headers.host + req.url });
   res.end();
@@ -552,4 +552,4 @@ http.createServer((req, res) => {
 const SubpoRt = 443;
 https.createServer(options, app).listen(SubpoRt, () => {
   console.log(`서버가 ${SubpoRt} 실행됩니다.`);
-});*/
+});
