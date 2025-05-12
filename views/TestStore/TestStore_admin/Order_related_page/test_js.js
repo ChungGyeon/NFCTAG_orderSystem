@@ -58,6 +58,15 @@ function calculateForMenutest() {
     console.log(`총 합계는 ${grandTotal.toLocaleString()}원입니다.`);
 }
 
+function removeCheckedMenu() {
+    // 체크된 table-card 요소를 모두 찾음
+    document.querySelectorAll('.table-card input.table-check:checked').forEach(checkbox => {
+        const card = checkbox.closest('.table-card'); // 체크박스가 속한 table-card 찾기
+        if (card) {
+            card.remove(); // table-card를 DOM에서 제거
+        }
+    });
+}
 
 
 function closeModal() {
