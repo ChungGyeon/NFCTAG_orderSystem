@@ -505,6 +505,17 @@ app.post('/DoSendOrder', (req, res) => {
 });
 
 
+//주문 취소 처리
+app.post('/DoCancelOrder', (req, res) => {
+    const { menu, tableNum } = req.body;
+
+    global.orders = global.orders.filter(order =>
+        !(order.menu === menu && order.tableNum == tableNum)
+    );
+    console.log('테이블번호 :',tableNum,', ',menu,'주문 취소'); // 주문 완료 로그
+    res.json({ success: true });
+});
+
 
 
 
