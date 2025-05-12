@@ -14,7 +14,6 @@
     </header>
     <main id="main-content">
         <% orders.forEach(order => { %>
-        <!--data-table은 손님쪽에서 id를 구현 후 제작해야해-->
         <div class="table-card" data-table="<%= order.tableNum %>" data-total="<%= order.totalPrice %>">
             <h3>테이블 <%= order.tableNum %></h3>
             <ul>
@@ -31,9 +30,33 @@
     <aside>
         <!--아래 세 개 버튼의 온클릭은 따로 함수 제작 필요 25.4.29-->
         <button class="aside adjust-button" onclick="calculateForMenu()">정산하기</button>
-        <button class="aside adjust-button-cancelVer" onclick="calculateForMenutest()">취소하기</button>
-        <button class="aside adjust-button-cancelVer" onclick="calculateForMenutest()">이전 정산 기록 확인</button>
+        <button class="aside adjust-button-cancelVer" onclick="OpenDeleteConfirmModal(this)">취소하기</button>
+        <button class="aside adjust-button-cancelVer" onclick="oneTimeCalculateModalOpen()">이전 정산 기록 확인</button>
     </aside>
+
+    <section><!--삭제 확인 모달-->
+        <div id="DeleteConfirmModal" class="DeleteConfirmModal">
+            <div class="DeleteConfirmModal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <p>정말로 취소하겠습니까??</p>
+                <div class="DeleteConfirmModal-buttons">
+                    <button onclick="removeCheckedMenu()">예</button>
+                    <button onclick="closeModal()">아니오</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section><!--일일 정산 매출 확인-->
+        <div id="one-time_calculate" class="one-time_calculate">
+            <div class="one-time_calculate-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <p>일일 매출 현황</p>
+                <div class="one-time_calculate-buttons">
+                    <button onclick="closeModal()">닫기</button>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
 
 <div id="settle-modal" class="modal-overlay">

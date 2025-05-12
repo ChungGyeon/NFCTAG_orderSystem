@@ -42,10 +42,6 @@
             <h2><%= item.name %></h2>
             <p class="price"><%= item.price %>원</p>
             <p class="review"><%= item.description %></p>
-            <form class="moding_menu_button_addiMenu_label" action ='/추가메뉴 거시기로' method="POST" onsubmit="아직함수는 구현x;">
-                    <input type="hidden" name="id" value="<%= item.id %>">
-                    <button class="moding_menu_addiMenu_button" type="submit">메뉴 옵션</button>
-            </form>
             <form class="moding_menu_button_delete_label" action = '/admin_addel' method="POST" onsubmit="event.preventDefault(); openConfirmModal(this);">
                     <input type="hidden" name="id" value="<%= item.id %>">
                     <button class="moding_menu_delete_button" type="submit">삭제</button>
@@ -156,7 +152,7 @@
           <p id="modal-description"></p>
           <div id="modal-options"></div>
           <input type="hidden" id="menu_id" required readonly/>
-          <button class="addToPlusMenu" onclick="openAdditionalMenuModal(document.getElementById('menu_id').value,document.getElementById('modal-menu-name').innerText,document.getElementById('modal-price').innerText)">
+          <button class="addToPlusMenu-button" onclick="openAdditionalMenuModal(document.getElementById('menu_id').value,document.getElementById('modal-menu-name').innerText,document.getElementById('modal-price').innerText)">
               옵션 추가
           </button>
         </div>
@@ -355,7 +351,7 @@
                 data.options.forEach(option => {
                     const label = document.createElement('label');
                     label.innerHTML = `<p class="additionalMenu_section"><input type="hidden" id="option-${option.id}" data-price="${option.additional_price}">${option.name} (${option.additional_price}원)</input>
-                    <button>삭제</button><button>수정</button>`;
+                    <button class="moding_menu_delete_button">삭제</button><button class="moding_menu_addiMenu_button">수정</button>`;
                     optionsContainer.appendChild(label);
                 });
             })
