@@ -41,7 +41,10 @@ function calculateForMenu() {
     document.getElementById("settle-modal").style.display = "flex";
 }
 
-//정산하기 버튼 로직테스트
+
+//정산하기 버튼 관련 스크립트
+
+//정산하기 버튼 로직테스트,
 function calculateForMenutest() {
     let grandTotal = 0; // 총 합계 초기화
 
@@ -57,6 +60,11 @@ function calculateForMenutest() {
 
     console.log(`총 합계는 ${grandTotal.toLocaleString()}원입니다.`);
 }
+
+
+
+
+
 
 //체크된 메뉴 취소하는 모달창 띄우기
 function OpenDeleteConfirmModal(form) {
@@ -105,8 +113,11 @@ function removeCheckedMenu() {
     document.getElementById("DeleteConfirmModal").style.display = "none";
 }
 
-
+function oneTimeCalculateModalOpen() {
+    document.getElementById("one-time_calculate").style.display = "block";
+}
 function closeModal() {
     document.getElementById("settle-modal").style.display = "none";
     document.getElementById("DeleteConfirmModal").style.display = "none";
+    document.getElementById("one-time_calculate").style.display = "none";
 }

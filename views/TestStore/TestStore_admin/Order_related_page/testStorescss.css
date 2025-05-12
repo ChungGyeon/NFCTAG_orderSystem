@@ -96,7 +96,8 @@ aside adjustment-button-cancelVer:hover {
     background-color: #388E3C;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
-/*정산 취소 모달 css, for_menu_modufy랑 동일한 로직임 이름만 달라*/
+/*정산 취소 모달 css + 일일매출 모달, for_menu_modufy랑 동일한 로직임 이름만 달라*/
+.one-time_calculate,
 .DeleteConfirmModal {
     display: none;
     position: fixed;
@@ -110,6 +111,7 @@ aside adjustment-button-cancelVer:hover {
     justify-content: center;
     background-color: rgba(0, 0, 0, 0.4);
 }
+.one-time_calculate-content,
 .DeleteConfirmModal-content {
     position: relative;
     background-color: #fefefe;
@@ -119,7 +121,7 @@ aside adjustment-button-cancelVer:hover {
     width: 80%;
     animation: slide-down 0.5s ease-out;
 }
-
+.one-time_calculate-content p,
 .DeleteConfirmModal-content p {
     display: flex;
     flex-direction: column;
@@ -128,12 +130,13 @@ aside adjustment-button-cancelVer:hover {
     font-size: 18px;
     margin-bottom: 20px;
 }
-
+.one-time_calculate-buttons,
 .DeleteConfirmModal-buttons {
     display: flex;
     justify-content: center;
     cursor: pointer;
 }
+.one-time_calculate-content button,
 .DeleteConfirmModal-content button {
     padding: 10px 20px;
     font-size: 16px;
