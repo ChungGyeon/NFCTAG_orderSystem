@@ -58,6 +58,11 @@ function calculateForMenutest() {
     console.log(`총 합계는 ${grandTotal.toLocaleString()}원입니다.`);
 }
 
+//체크된 메뉴 취소하는 모달창 띄우기
+function OpenDeleteConfirmModal(form) {
+    document.getElementById("DeleteConfirmModal").style.display = "block";
+}
+//위에서 나온 모달창에서 확인 버튼 클릭 시 체그된 메뉴 삭제하는 함수
 function removeCheckedMenu() {
     // 체크된 table-card 요소를 모두 찾음
     document.querySelectorAll('.table-card input.table-check:checked').forEach(checkbox => {
@@ -66,9 +71,11 @@ function removeCheckedMenu() {
             card.remove(); // table-card를 DOM에서 제거
         }
     });
+    document.getElementById("DeleteConfirmModal").style.display = "none";
 }
 
 
 function closeModal() {
     document.getElementById("settle-modal").style.display = "none";
+    document.getElementById("DeleteConfirmModal").style.display = "none";
 }
