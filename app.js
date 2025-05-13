@@ -258,7 +258,7 @@ app.get('/firstStore/menu2', (req, res) => {
     });
 });
 
-//60~177line firstStore 관리자 페이지
+//60~177line firstStore 관리자 페이지, 이젠 모든 상점의 메뉴를 확인해볼 수 있는 페이지네,
 app.get('/firstStore/admin', (req, res) => {
     const sql = 'SELECT * FROM menu';
     db.query(sql, (err, results) => {
@@ -525,7 +525,8 @@ app.get('/TestStore/TestStore_admin/TestStore_admin_main', (req, res) => {
 
 //테스트 상점 메인관리자 페이지 이동 스크립트
 app.get('/TestStore/TestStore_admin/Modifying_menu_page/TestStore_menu_modify', (req, res) => {
-const sql = 'SELECT * FROM menu';
+const storeId=req.session.storeID;
+const sql = `SELECT * FROM menu WHERE store_name="${storeId}"`;
     db.query(sql, (err, results) => {
         if (err) {
             console.error('쿼리가 제대로 명시되지 않았습니다.: ' + err.stack);
@@ -542,8 +543,8 @@ app.get('/TestStore/TestStore_admin/Order_related_page/test', (req, res) => {
         res.render('./TestStore/TestStore_admin/Order_related_page/test', {orders: global.orders || []}); // test.ejs 파일을 렌더링
 });
 
+/*도대체 527~538와 똑같은놈이 왜 또 있는건데? 일단 주석처리
 //308~320 테스트용 손님 페이지 임시로 보류
-
 app.get('/TestStore/TestStore_admin/Modifying_menu_page/TestStore_menu_modify', (req, res) => {
     const sql = 'SELECT * FROM menu';
     db.query(sql, (err, results) => {
@@ -555,7 +556,7 @@ app.get('/TestStore/TestStore_admin/Modifying_menu_page/TestStore_menu_modify', 
         const menuResults = results;
         res.render('/TestStore/TestStore_admin/Modifying_menu_page/TestStore_menu_modify', { items: menuResults}); // test.ejs 파일을 렌더링
     });
-});
+});*/
 // 로그인 페이지
 app.get('/login', (req, res) => {
     res.render('login/login');
