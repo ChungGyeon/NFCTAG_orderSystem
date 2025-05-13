@@ -294,8 +294,9 @@ app.post('/admin_adTomenu', (req, res) => {
 
     function insertMenu() {
         const { name, price, description, image_url } = req.body;
-        const sql = 'INSERT INTO menu (id, name, price, description, image_url) VALUES (?, ?, ?, ?, ?)';
-        db.query(sql, [id, name, price,description, image_url], (err, result) => {
+        const storeName = req.session.storeID;
+        const sql = 'INSERT INTO menu (id, name, price, description, image_url, store_name) VALUES (?, ?, ?, ?, ?, ?)';
+        db.query(sql, [id, name, price,description, image_url, storeName], (err, result) => {
             if (err) {
                 console.error('쿼리가 제대로 명시되지 않았습니다.: ' + err.stack);
                 res.status(500).send('데이터베이스 쿼리 실패');
@@ -466,7 +467,7 @@ app.post('/addToMenuInfo', upload.single('myFile'),(req, res) => {
     }
 });
 
-*/
+
 //클라이언트가 이미지를 요청할 때 사용할 경로를 추가, 보안에 주의요구됨
 app.use("/test_img_upload", express.static(path.join(__dirname, "test_img_upload/")));
 
