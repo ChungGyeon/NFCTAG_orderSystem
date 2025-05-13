@@ -179,7 +179,7 @@ app.post('/saveStoreLocation2', (req, res) => {
     if (!store || !lat || !lng) {
         return res.status(400).json({ success: false, message: "요청 정보 누락" });
     }
-
+   //하기싫다 살려주라
     const sql = `
         INSERT INTO store_location (store_id, latitude, longitude)
         VALUES (?, ?, ?)
