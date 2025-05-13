@@ -236,8 +236,10 @@ app.get('/firstStore/menu2', (req, res) => {
     if (!req.session.locationVerified) { //뭔가 이상하다 했더니 이걸 따로 만들어 놓고있네
         return res.status(403).send("🚫 위치 인증이 필요합니다.");
     }
+    //storeID를 가져오지 못해고 undefined로 나와, 뭐가 문제여
+    const storeId = req.query.storeID;
     const tableNum= req.query.tableNum;
-    const sql=`SELECT * FROM menu;`;
+    const sql=`SELECT * FROM menu WHERE store_name="${storeId}";`;
     db.query(sql, (err, results) => {
         if (err) {
             console.error('쿼리가 제대로 명시되지 않았습니다.: ' + err.stack);
@@ -248,7 +250,7 @@ app.get('/firstStore/menu2', (req, res) => {
         //const menuOptionResults = results[1];
         const menuResults = results;
         //메인메뉴는 items, 추가옵션은 options, tableNum은 nfc태그에 부여된 테이블 번호를 넘김
-        res.render('firstStore/menu2', { items:menuResults, tableNum:tableNum });//items: menuResults, options: menuOptionResults
+        res.render('firstStore/menu2', { items:menuResults, tableNum:tableNum, storeID:storeId});//items: menuResults, options: menuOptionResults
         //res.render('firstStore/menu2', { items: menuResults, options: menuOptionResults });
     });
 });
