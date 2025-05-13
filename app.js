@@ -128,7 +128,7 @@ db.connect((err) => {
 app.post('/verifyLocation2', (req, res) => {
     const { store, lat, lng } = req.body;
     const sql = `SELECT latitude, longitude FROM store_location WHERE store_id = ?`;
-    console.log(store, lat, lng);
+
     db.query(sql, [store], (err, result) => {
         if (err) {
             console.error('식당 ID 전송 실패:', err);
@@ -465,42 +465,10 @@ app.post('/addToMenuInfo', upload.single('myFile'),(req, res) => {
         });
     }
 });
-/* 메뉴 추가옵션은 잠시 미룸
-//firstStore 어드민용 옵션추가 이미지 업로드 구축
-app.post('/option_StoreImg_upload', upload.single('myFile'), (req, res) => {
-    if (!req.file) {
-        return res.status(400).json({ error: "파일이 업로드되지 않았습니다." });
-    }
-    //res.json({ filename: req.file.originalname });
-    res.redirect(`firstStore/admin?filename=${encodeURIComponent(req.file.originalname)}`);
-});
+
 */
 //클라이언트가 이미지를 요청할 때 사용할 경로를 추가, 보안에 주의요구됨
 app.use("/test_img_upload", express.static(path.join(__dirname, "test_img_upload/")));
-
-
-
-
-// 기존 menu2에 사용하던 라우트, 위에 개조된 라우터를 가져와서 다시 만들어야지
-/*
-app.get('/firstStore/menu2', (req, res) => {
-    const tableNum= req.query.tableNum;
-    const sql=`SELECT * FROM menu;`;
-    db.query(sql, (err, results) => {
-        if (err) {
-            console.error('쿼리가 제대로 명시되지 않았습니다.: ' + err.stack);
-            res.status(500).send('데이터베이스 쿼리 실패');
-            return;
-        }
-        
-        //const menuResults = results[0];
-        //const menuOptionResults = results[1];
-        const menuResults = results;
-        //메인메뉴는 items, 추가옵션은 options, tableNum은 nfc태그에 부여된 테이블 번호를 넘김
-        res.render('firstStore/menu2', { items:menuResults, tableNum:tableNum });//items: menuResults, options: menuOptionResults
-        //res.render('firstStore/menu2', { items: menuResults, options: menuOptionResults });
-    });
-});*/
 
 // 손님이 메뉴를 선택시 추가옵션을 불러오는 코드, 228~240
 app.get('/getMenuOptions', (req, res) => {
