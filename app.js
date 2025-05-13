@@ -230,19 +230,26 @@ app.get('/', (req, res) => { // 주소?table_num=1 같은 형식으로 넘어올
 
     res.render('main', {TestPageConnect: testPageConnect, tableNum: table_num, storeID: storeId});// main으로 최초접근 후 다른 곳으로 이동하는 용}
 });
-//firstStore 주문 페이지 접근 라우터 (GPS 인증 필수)
+
+//firstStore 메뉴 페이지 접속 라우트
 app.get('/firstStore/menu2', (req, res) => {
-    if (!req.session.locationVerified) {
+    if (!req.session.locationVerified) { //뭔가 이상하다 했더니 이걸 따로 만들어 놓고있네
         return res.status(403).send("🚫 위치 인증이 필요합니다.");
     }
-
-    const tableNum = req.query.tableNum;
-    db.query('SELECT * FROM menu', (err, results) => {
+    const tableNum= req.query.tableNum;
+    const sql=`SELECT * FROM menu;`;
+    db.query(sql, (err, results) => {
         if (err) {
-            console.error('쿼리 실패:', err);
-            return res.status(500).send('DB 오류');
+            console.error('쿼리가 제대로 명시되지 않았습니다.: ' + err.stack);
+            res.status(500).send('데이터베이스 쿼리 실패');
+            return;
         }
-        res.render('firstStore/menu2', { items: results, tableNum });
+        //const menuResults = results[0];
+        //const menuOptionResults = results[1];
+        const menuResults = results;
+        //메인메뉴는 items, 추가옵션은 options, tableNum은 nfc태그에 부여된 테이블 번호를 넘김
+        res.render('firstStore/menu2', { items:menuResults, tableNum:tableNum });//items: menuResults, options: menuOptionResults
+        //res.render('firstStore/menu2', { items: menuResults, options: menuOptionResults });
     });
 });
 
@@ -469,15 +476,11 @@ app.use("/test_img_upload", express.static(path.join(__dirname, "test_img_upload
 
 
 
-// 182~210 첫번째 상점 손님페이지
+// 기존 menu2에 사용하던 라우트, 위에 개조된 라우터를 가져와서 다시 만들어야지
+/*
 app.get('/firstStore/menu2', (req, res) => {
     const tableNum= req.query.tableNum;
     const sql=`SELECT * FROM menu;`;
-    /*
-    const sql = `
-        SELECT * FROM menu;
-        SELECT * FROM menu_option;
-    `;*/
     db.query(sql, (err, results) => {
         if (err) {
             console.error('쿼리가 제대로 명시되지 않았습니다.: ' + err.stack);
@@ -492,7 +495,7 @@ app.get('/firstStore/menu2', (req, res) => {
         res.render('firstStore/menu2', { items:menuResults, tableNum:tableNum });//items: menuResults, options: menuOptionResults
         //res.render('firstStore/menu2', { items: menuResults, options: menuOptionResults });
     });
-});
+});*/
 
 // 손님이 메뉴를 선택시 추가옵션을 불러오는 코드, 228~240
 app.get('/getMenuOptions', (req, res) => {
