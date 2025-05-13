@@ -55,6 +55,14 @@ const options = {
 const storeLocations = {
     firstStore: { lat: 36.625688, lng: 127.465233 },
 };
+//관리자 외에는 접속이 불가 하도록 하는 관리자 인증 미들 웨어
+function checkAdminAuth(req, res, next) {
+    if (req.session.isAdmin) {
+        return next();
+    } else {
+        res.status(403).send("관리자 로그인이 필요합니다.");
+    }
+}
 
 function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
     const R = 6371000;
@@ -165,7 +173,9 @@ app.post('/verifyLocation', (req, res) => {
 
 //가게 GPS 저장 라우트 아마 sql연동될때 사용하는 위치 저장 라우터
 app.post('/saveStoreLocation2', (req, res) => {
-    const { store, lat, lng } = req.body;
+    const store = req.session.storeId;  // ← 세션에서 로그인한 사용자 ID 사용
+    const { lat, lng } = req.body;
+
     if (!store || !lat || !lng) {
         return res.status(400).json({ success: false, message: "요청 정보 누락" });
     }
@@ -173,7 +183,7 @@ app.post('/saveStoreLocation2', (req, res) => {
     const sql = `
         INSERT INTO store_location (store_id, latitude, longitude)
         VALUES (?, ?, ?)
-        ON DUPLICATE KEY UPDATE latitude = ?, longitude = ?, updated_at = NOW()
+            ON DUPLICATE KEY UPDATE latitude = ?, longitude = ?, updated_at = NOW()
     `;
 
     db.query(sql, [store, lat, lng, lat, lng], (err, result) => {
@@ -182,8 +192,8 @@ app.post('/saveStoreLocation2', (req, res) => {
             return res.status(500).json({ success: false, message: 'DB 저장 실패' });
         }
 
-        storeLocations[store] = { lat: parseFloat(lat), lng: parseFloat(lng) }; // 메모리에도 저장
-        console.log(`✅ [${store}] 위치 DB 저장 완료 → ${lat}, ${lng}`);
+        storeLocations[store] = { lat: parseFloat(lat), lng: parseFloat(lng) };
+        console.log(`✅ [${store}] 위치 저장 완료 → ${lat}, ${lng}`);
         return res.json({ success: true });
     });
 });
@@ -204,7 +214,13 @@ app.post('/saveStoreLocation', (req, res) => {
     console.log(`✅ [${store}] 위치 메모리 저장 완료 → 위도: ${lat}, 경도: ${lng}`);
     return res.json({ success: true });
 });
-
+//관리용 페이지 로그인 여부 체크
+app.get('/TestStore/TestStore_admin/TestStore_admin_main', (req, res) => {
+    if (!req.session.storeId) {
+        return res.redirect('/login');
+    }
+    res.render('TestStore/TestStore_admin/TestStore_admin_main');
+});
 
 
 // 기본 경로 : 이젠 main페이지가 고객이 접근시 gps인증 라우터로 날려주고, 개발자(db연결 안될때)는 이전 그대로 test.ejs로 날려줌
@@ -544,7 +560,7 @@ app.get('/TestStore/TestStore_admin/Order_related_page/test', (req, res) => {
 });
 
 //308~320 테스트용 손님 페이지 임시로 보류
-/*
+
 app.get('/TestStore/TestStore_admin/Modifying_menu_page/TestStore_menu_modify', (req, res) => {
     const sql = 'SELECT * FROM menu';
     db.query(sql, (err, results) => {
@@ -557,11 +573,60 @@ app.get('/TestStore/TestStore_admin/Modifying_menu_page/TestStore_menu_modify', 
         res.render('/TestStore/TestStore_admin/Modifying_menu_page/TestStore_menu_modify', { items: menuResults}); // test.ejs 파일을 렌더링
     });
 });
-*/
+// 로그인 페이지
+app.get('/login', (req, res) => {
+    res.render('login/login');
+});
 
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+    const sql = 'SELECT * FROM store_user WHERE username = ? AND password = ?';
 
+    db.query(sql, [username, password], (err, results) => {
+        if (err || results.length === 0) {
+            return res.send('<script>alert("로그인 실패"); window.location="/login";</script>');
+        }
 
+        const user = results[0]; // ✅ 사용자 정보
+        req.session.isAdmin = true;
+        req.session.username = user.username;
+        req.session.storeId = user.id;
 
+        res.redirect('/TestStore/TestStore_admin/TestStore_admin_main');
+    });
+});
+
+// 회원가입 페이지
+app.get('/register', (req, res) => {
+    res.render('login/register'); // 파일도 views/login/register.ejs로 넣었을 경우
+});
+// 회원가입 처리 POST
+app.post('/register', (req, res) => {
+    const { store_name, phone_number, address, username, password } = req.body;
+
+    const sql = `
+      INSERT INTO store_user (store_name, phone_number, address, username, password)
+      VALUES (?, ?, ?, ?, ?)
+  `;
+
+    db.query(sql, [store_name, phone_number, address, username, password], (err, result) => {
+        if (err) {
+            console.error('회원가입 실패:', err);
+            return res.status(500).send('회원가입 중 오류 발생');
+        }
+        res.redirect('/login'); // 회원가입 후 로그인 페이지로 이동
+    });
+});
+// 소개 페이지
+app.get('/intro', (req, res) => {
+    res.render('login/intro');
+});
+// 로그아웃 후 페이지가 있다면
+app.get('/logout', (req, res) => {
+    req.session.destroy(() => {
+        res.render('login/logout'); // logout.ejs가 존재할 경우
+    });
+});
 //서버 실행화면 확인
 
 const SubpoRt = 3001;

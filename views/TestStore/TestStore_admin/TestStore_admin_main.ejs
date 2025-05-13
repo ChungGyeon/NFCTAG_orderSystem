@@ -30,7 +30,6 @@
     <!-- ✅ 위치 저장 스크립트 추가 -->
     <script>
         function saveStoreLocation() {
-
             if (!navigator.geolocation) {
                 alert("브라우저가 위치 정보를 지원하지 않습니다.");
                 return;
@@ -38,7 +37,6 @@
 
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    const store_id = document.getElementById('storeId').value;
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
 
@@ -48,7 +46,6 @@
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            store: store_id,  // 필요 시 수정
                             lat: lat,
                             lng: lng
                         })
@@ -56,13 +53,13 @@
                         .then(res => res.json())
                         .then(data => {
                             if (data.success) {
-                                alert(`위치 저장 완료\n위도: ${lat}, 경도: ${lng}`);
+                                alert(`✅ 위치 저장 완료\n위도: ${lat}\n경도: ${lng}`);
                             } else {
-                                alert("저장 실패: " + data.message);
+                                alert("❌ 저장 실패: " + data.message);
                             }
                         })
                         .catch(err => {
-                            console.error("서버 오류:", err);
+                            console.error("🚫 서버 오류:", err);
                             alert("서버 통신 오류 발생");
                         });
                 },
