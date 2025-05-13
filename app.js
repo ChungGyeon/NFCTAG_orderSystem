@@ -273,7 +273,7 @@ app.get('/firstStore/admin', (req, res) => {
 });
 
 
-// post방식 admin_adTomenu /버튼으로 추가하기
+// post방식 admin_adTomenu 옛날버전, 아직 냄겨두다가 추후에 주석처리 후 기능 이상없는지 확인한 뒤 삭제 예정
 app.post('/admin_adTomenu', (req, res) => {
     var id = 0;
     if (req.body.id == 0) {
@@ -295,6 +295,7 @@ app.post('/admin_adTomenu', (req, res) => {
     function insertMenu() {
         const { name, price, description, image_url } = req.body;
         const storeName = req.session.storeID;
+        console.log("여기가 지금 테스트 중인 거 : ", storeName);
         const sql = 'INSERT INTO menu (id, name, price, description, image_url, store_name) VALUES (?, ?, ?, ?, ?, ?)';
         db.query(sql, [id, name, price,description, image_url, storeName], (err, result) => {
             if (err) {
@@ -431,9 +432,10 @@ app.post('/StoreImg_upload', upload.single('myFile'), (req, res) => {
     res.redirect(`TestStore/TestStore_admin/Modifying_menu_page/TestStore_menu_modify?filename=${encodeURIComponent(req.file.originalname)}`);
 });
 
-/*이미지 전송과, 메뉴 정보를 동시에 처리하는 로직, 혼자 도전해볼게 25/05/04*/
+/*이미지 전송과, 메뉴 정보를 동시에 처리하는 로직, 혼자 도전해볼게 25/05/04 완성하긴 했다. 근데 위에 기본 메뉴추가 라우터랑 헷갈리니 주의할 것
+이전꺼 227~309*/
+
 app.post('/addToMenuInfo', upload.single('myFile'),(req, res) => {
-    console.log('보디 내용물', req.body);
     console.log('req.file:', req.file);
     var id = 0;
         if (req.body.id == 0) {
@@ -455,8 +457,10 @@ app.post('/addToMenuInfo', upload.single('myFile'),(req, res) => {
     function insertMenu() {
         const { name, price, description } = req.body;
         const image_url = req.file? req.file.filename : null;
-        const sql = 'INSERT INTO menu (id, name, price, description, image_url) VALUES (?, ?, ?, ?, ?)';
-        db.query(sql, [id, name, price,description, image_url], (err, result) => {
+        const storeName = req.session.storeID;
+        console.log("지금 테스트중인 곳: ", storeName);
+        const sql = 'INSERT INTO menu (id, name, price, description, image_url, store_name) VALUES (?, ?, ?, ?, ?, ?)';
+        db.query(sql, [id, name, price,description, image_url, storeName], (err, result) => {
             if (err) {
                 console.error('쿼리가 제대로 명시되지 않았습니다.: ' + err.stack);
                 res.status(500).send('데이터베이스 쿼리 실패');
