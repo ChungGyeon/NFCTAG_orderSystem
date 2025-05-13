@@ -16,7 +16,11 @@
             //TestPageConnect가 true면 test상점으로
             //아니면 메인으로
             const TestConnect = <%= JSON.stringify(TestPageConnect) %>;
-            const tableNum = <%= tableNum %>; //테이블 번호를 받아옴
+            const storeID = <%- JSON.stringify(storeID) %>;
+            const tableNum = <%- tableNum %>
+            //testConnect가 담기는 방식이랑 storeID랑 tableNum이 담기는 방식이 다른데, 이게 도대체 왜 이따구로 디는지 도당채 알수가 없다
+            //const tableNum = <%= tableNum %>; //테이블 번호를 받아옴
+            //const storeID = <%= JSON.stringify(storeID) %>; //파라메터에 적힌 매장 이름을 가져옴
             if(TestConnect){
             setTimeout(() => {
                             window.location.href = './TestStore/TestStore_admin/TestStore_admin_main';
@@ -24,16 +28,16 @@
             }
             else{
                 navigator.geolocation.getCurrentPosition(success, error);
-
                 function success(position) {
                     const userLat = position.coords.latitude;
                     const userLng = position.coords.longitude;
+                    console.log("아이디 체크:", storeID);
 
                     fetch('/verifyLocation2', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            store: 1, //!!!!!!!!!!!!!!!!!!!!!!!!!25.05.09 임시로 1로 설정, 나중에 sql에서 가져와야함
+                            store: storeID,
                             lat: userLat,
                             lng: userLng,
                         })
@@ -41,7 +45,7 @@
                         .then(res => res.json())
                         .then(data => {
                             if (data.allowed) {
-                                window.location.href = `/firstStore/menu2?tableNum=${encodeURIComponent(tableNum)}`;
+                                window.location.href = `/firstStore/menu2?storeID=${encodeURIComponent(storeID)}&tableNum=${encodeURIComponent(tableNum)}`;
                             } else {
                                 alert("현재 위치가 반경 50m 밖입니다.\n접속이 제한됩니다.");
                             }
