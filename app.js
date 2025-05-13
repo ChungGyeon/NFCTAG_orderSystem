@@ -55,6 +55,14 @@ const options = {
 const storeLocations = {
     firstStore: { lat: 36.625688, lng: 127.465233 },
 };
+//관리자 외에는 접속이 불가 하도록 하는 관리자 인증 미들 웨어
+function checkAdminAuth(req, res, next) {
+    if (req.session.isAdmin) {
+        return next();
+    } else {
+        res.status(403).send("관리자 로그인이 필요합니다.");
+    }
+}
 
 function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
     const R = 6371000;
@@ -85,7 +93,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  cookie: { masAge: 300000} // 세션 유지 시간 (5분)}
+  cookie: { maxAge: 300000} // 세션 유지 시간 (5분)}
   )};*/
 
 db.connect((err) => {
@@ -165,15 +173,17 @@ app.post('/verifyLocation', (req, res) => {
 
 //가게 GPS 저장 라우트 아마 sql연동될때 사용하는 위치 저장 라우터
 app.post('/saveStoreLocation2', (req, res) => {
-    const { store, lat, lng } = req.body;
+    const store = req.session.storeID;  // ← 세션에서 로그인한 사용자 ID 사용
+    const { lat, lng } = req.body;
+
     if (!store || !lat || !lng) {
         return res.status(400).json({ success: false, message: "요청 정보 누락" });
     }
-
+   //하기싫다 살려주라
     const sql = `
         INSERT INTO store_location (store_id, latitude, longitude)
         VALUES (?, ?, ?)
-        ON DUPLICATE KEY UPDATE latitude = ?, longitude = ?, updated_at = NOW()
+            ON DUPLICATE KEY UPDATE latitude = ?, longitude = ?, updated_at = NOW()
     `;
 
     db.query(sql, [store, lat, lng, lat, lng], (err, result) => {
@@ -182,8 +192,8 @@ app.post('/saveStoreLocation2', (req, res) => {
             return res.status(500).json({ success: false, message: 'DB 저장 실패' });
         }
 
-        storeLocations[store] = { lat: parseFloat(lat), lng: parseFloat(lng) }; // 메모리에도 저장
-        console.log(`✅ [${store}] 위치 DB 저장 완료 → ${lat}, ${lng}`);
+        storeLocations[store] = { lat: parseFloat(lat), lng: parseFloat(lng) };
+        console.log(`✅ [${store}] 위치 저장 완료 → ${lat}, ${lng}`);
         return res.json({ success: true });
     });
 });
@@ -204,27 +214,47 @@ app.post('/saveStoreLocation', (req, res) => {
     console.log(`✅ [${store}] 위치 메모리 저장 완료 → 위도: ${lat}, 경도: ${lng}`);
     return res.json({ success: true });
 });
-
+//관리용 페이지 로그인 여부 체크
+app.get('/TestStore/TestStore_admin/TestStore_admin_main', (req, res) => {
+    if (!req.session.storeID) {
+        return res.redirect('/login');
+    }
+    res.render('TestStore/TestStore_admin/TestStore_admin_main', {
+        username: req.session.username,
+        storeID: req.session.storeID,
+    });
+});
 
 
 // 기본 경로 : 이젠 main페이지가 고객이 접근시 gps인증 라우터로 날려주고, 개발자(db연결 안될때)는 이전 그대로 test.ejs로 날려줌
 app.get('/', (req, res) => { // 주소?table_num=1 같은 형식으로 넘어올거야
+    const storeId =req.query.storeID;
     const table_num= req.query.tableNum;
-    res.render('main', {TestPageConnect: testPageConnect, tableNum: table_num});// main으로 최초접근 후 다른 곳으로 이동하는 용}
+
+    res.render('main', {TestPageConnect: testPageConnect, tableNum: table_num, storeID: storeId});// main으로 최초접근 후 다른 곳으로 이동하는 용}
 });
-//firstStore 주문 페이지 접근 라우터 (GPS 인증 필수)
+
+//firstStore 메뉴 페이지 접속 라우트
 app.get('/firstStore/menu2', (req, res) => {
-    if (!req.session.locationVerified) {
+    if (!req.session.locationVerified) { //뭔가 이상하다 했더니 이걸 따로 만들어 놓고있네
         return res.status(403).send("🚫 위치 인증이 필요합니다.");
     }
 
-    const tableNum = req.query.tableNum;
-    db.query('SELECT * FROM menu', (err, results) => {
+    const storeId = req.query.storeID;
+    const tableNum= req.query.tableNum;
+    const sql=`SELECT * FROM menu WHERE store_name="${storeId}";`;
+    db.query(sql, (err, results) => {
         if (err) {
-            console.error('쿼리 실패:', err);
-            return res.status(500).send('DB 오류');
+            console.error('쿼리가 제대로 명시되지 않았습니다.: ' + err.stack);
+            res.status(500).send('데이터베이스 쿼리 실패');
+            return;
         }
-        res.render('firstStore/menu2', { items: results, tableNum });
+        //const menuResults = results[0];
+        //const menuOptionResults = results[1];
+        const menuResults = results;
+        //메인메뉴는 items, 추가옵션은 options, tableNum은 nfc태그에 부여된 테이블 번호를 넘김
+        res.render('firstStore/menu2', { items:menuResults, tableNum:tableNum, storeID:storeId});//items: menuResults, options: menuOptionResults
+        //res.render('firstStore/menu2', { items: menuResults, options: menuOptionResults });
     });
 });
 
@@ -435,46 +465,10 @@ app.post('/addToMenuInfo', upload.single('myFile'),(req, res) => {
         });
     }
 });
-/* 메뉴 추가옵션은 잠시 미룸
-//firstStore 어드민용 옵션추가 이미지 업로드 구축
-app.post('/option_StoreImg_upload', upload.single('myFile'), (req, res) => {
-    if (!req.file) {
-        return res.status(400).json({ error: "파일이 업로드되지 않았습니다." });
-    }
-    //res.json({ filename: req.file.originalname });
-    res.redirect(`firstStore/admin?filename=${encodeURIComponent(req.file.originalname)}`);
-});
+
 */
 //클라이언트가 이미지를 요청할 때 사용할 경로를 추가, 보안에 주의요구됨
 app.use("/test_img_upload", express.static(path.join(__dirname, "test_img_upload/")));
-
-
-
-
-// 182~210 첫번째 상점 손님페이지
-app.get('/firstStore/menu2', (req, res) => {
-    const tableNum= req.query.tableNum;
-    const sql=`SELECT * FROM menu;`;
-    /*
-    const sql = `
-        SELECT * FROM menu;
-        SELECT * FROM menu_option;
-    `;*/
-    db.query(sql, (err, results) => {
-        if (err) {
-            console.error('쿼리가 제대로 명시되지 않았습니다.: ' + err.stack);
-            res.status(500).send('데이터베이스 쿼리 실패');
-            return;
-        }
-        
-        //const menuResults = results[0];
-        //const menuOptionResults = results[1];
-        const menuResults = results;
-        //메인메뉴는 items, 추가옵션은 options, tableNum은 nfc태그에 부여된 테이블 번호를 넘김
-        res.render('firstStore/menu2', { items:menuResults, tableNum:tableNum });//items: menuResults, options: menuOptionResults
-        //res.render('firstStore/menu2', { items: menuResults, options: menuOptionResults });
-    });
-});
 
 // 손님이 메뉴를 선택시 추가옵션을 불러오는 코드, 228~240
 app.get('/getMenuOptions', (req, res) => {
@@ -544,7 +538,7 @@ app.get('/TestStore/TestStore_admin/Order_related_page/test', (req, res) => {
 });
 
 //308~320 테스트용 손님 페이지 임시로 보류
-/*
+
 app.get('/TestStore/TestStore_admin/Modifying_menu_page/TestStore_menu_modify', (req, res) => {
     const sql = 'SELECT * FROM menu';
     db.query(sql, (err, results) => {
@@ -557,11 +551,61 @@ app.get('/TestStore/TestStore_admin/Modifying_menu_page/TestStore_menu_modify', 
         res.render('/TestStore/TestStore_admin/Modifying_menu_page/TestStore_menu_modify', { items: menuResults}); // test.ejs 파일을 렌더링
     });
 });
-*/
+// 로그인 페이지
+app.get('/login', (req, res) => {
+    res.render('login/login');
+});
 
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+    const sql = 'SELECT * FROM store_user WHERE username = ? AND password = ?';
 
+    db.query(sql, [username, password], (err, results) => {
+        if (err || results.length === 0) {
+            return res.send('<script>alert("로그인 실패"); window.location="/login";</script>');
+        }
 
+        const user = results[0]; // 사용자 정보
+        req.session.isAdmin = true; //관리자 여부(이거 그 이용자측 관리자가 아니라, 진짜 관리자를 의미할텐데 왜 이게 트루상태입니까)
+        req.session.username = user.username;//사용자 이름
+        req.session.storeID = user.store_name; //매장 id
+        console.log(user.store_name);
 
+        res.redirect('/TestStore/TestStore_admin/TestStore_admin_main');
+    });
+});
+
+// 회원가입 페이지
+app.get('/register', (req, res) => {
+    res.render('login/register'); // 파일도 views/login/register.ejs로 넣었을 경우
+});
+// 회원가입 처리 POST
+app.post('/register', (req, res) => {
+    const { store_name, phone_number, address, username, password } = req.body;
+
+    const sql = `
+      INSERT INTO store_user (store_name, phone_number, address, username, password)
+      VALUES (?, ?, ?, ?, ?)
+  `;
+
+    db.query(sql, [store_name, phone_number, address, username, password], (err, result) => {
+        if (err) {
+            console.error('회원가입 실패:', err);
+            return res.status(500).send('회원가입 중 오류 발생');
+        }
+        res.redirect('/login'); // 회원가입 후 로그인 페이지로 이동
+    });
+});
+// 소개 페이지
+app.get('/intro', (req, res) => {
+    res.render('login/intro');
+});
+// 로그아웃 후 페이지가 있다면
+app.get('/logout', (req, res) => {
+    req.session.destroy(() => {
+        res.render('login/logout'); // logout.ejs가 존재할 경우
+    });
+});
 //서버 실행화면 확인
 /*
 const SubpoRt = 3001;
