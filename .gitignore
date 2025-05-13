@@ -11,5 +11,6 @@
 .env
 #.DS_Store파일무시
 .DS_Store
+#server.js 무시, 서버에서만 사용될 파일
 #.DS_Store파일 무시
 views/.DS_Store

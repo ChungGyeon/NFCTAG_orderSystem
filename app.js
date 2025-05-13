@@ -44,14 +44,8 @@ app.use(session({ // 세션 설정
     saveUninitialized: false
 }));
 
-//ssl관련, 작동 안되면은 47~51라인 주석 처리 후, 540~545라인 주석 해제, 그 아래 내용은 주석처리
-
-const options = {
-  key: fs.readFileSync(process.env.TAGORDER_PRIBUSY_SSL_PATH),
-  cert: fs.readFileSync(process.env.TAGORDER_CA_SSL_PATH)
-};
 //gps 설정 관련, gps라우터는  112 line부터
-//메모리 저장용 (기본 위치)
+//메모리 저장용 (기본 위치), 서버컴퓨터는 storeLocations를 주석처리해서 사용할 수 있도록
 const storeLocations = {
     firstStore: { lat: 36.625688, lng: 127.465233 },
 };
@@ -612,19 +606,15 @@ app.get('/logout', (req, res) => {
         res.render('login/logout'); // logout.ejs가 존재할 경우
     });
 });
-//서버 실행화면 확인
-/*
+
+
+//테스트용 서버 실행화면 확인
 const SubpoRt = 3001;
 app.listen(SubpoRt, () => {
     console.log(`서버가 ${SubpoRt} 실행됩니다.`);
 });
-*/
 
-http.createServer((req, res) => {
-  res.writeHead(301, { "Location": "https://" + req.headers.host + req.url });
-  res.end();
-}).listen(80);
-const SubpoRt = 443;
-https.createServer(options, app).listen(SubpoRt, () => {
-  console.log(`서버가 ${SubpoRt} 실행됩니다.`);
-});
+//이제 서버컴퓨터에는 server.js에서 실행하며, 아래 코드는 server.js에서 app.js를 쓰기 위한 export설정임
+
+module.exports = app;
+
