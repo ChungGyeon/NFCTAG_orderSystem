@@ -3,14 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TagOrder 관리자 페이지</title>
+  <title><%= storeID %>-TagOrder 관리자 페이지</title>
   <link href="./allcss.css" rel="stylesheet">
 </head>
 <body>
     <!--단순히 정산, 메뉴관리 이동 스크립트, GET방식으로 보냄, 관련 nodejs는 254~259-->
-  <input type="hidden" id="storeId" value=1><!--25.05.09 gps랑 sql연동을 위한 임시 id 부여, 추후엔 이거 어디서 만들고 가져올지 고민해야해-->
+  <input type="hidden" id="storeId" value=1>
   <div class="grid-container">
-   <form class="menu_container" action="/TestStore/TestStore_admin/Order_related_page/test" method="GET">
+      <p>안녕하세요 <%= username %>님!</p>
+      <form class="menu_container" action="/TestStore/TestStore_admin/Order_related_page/test" method="GET">
        <button type="submit">
            <h2>정산 관리</h2>
        </button>
@@ -34,7 +35,7 @@
                 alert("브라우저가 위치 정보를 지원하지 않습니다.");
                 return;
             }
-
+            const storeID = "<%= storeID %>";
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const lat = position.coords.latitude;

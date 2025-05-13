@@ -93,7 +93,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  cookie: { masAge: 300000} // 세션 유지 시간 (5분)}
+  cookie: { maxAge: 300000} // 세션 유지 시간 (5분)}
   )};*/
 
 db.connect((err) => {
@@ -173,7 +173,7 @@ app.post('/verifyLocation', (req, res) => {
 
 //가게 GPS 저장 라우트 아마 sql연동될때 사용하는 위치 저장 라우터
 app.post('/saveStoreLocation2', (req, res) => {
-    const store = req.session.storeId;  // ← 세션에서 로그인한 사용자 ID 사용
+    const store = req.session.storeID;  // ← 세션에서 로그인한 사용자 ID 사용
     const { lat, lng } = req.body;
 
     if (!store || !lat || !lng) {
@@ -216,10 +216,13 @@ app.post('/saveStoreLocation', (req, res) => {
 });
 //관리용 페이지 로그인 여부 체크
 app.get('/TestStore/TestStore_admin/TestStore_admin_main', (req, res) => {
-    if (!req.session.storeId) {
+    if (!req.session.storeID) {
         return res.redirect('/login');
     }
-    res.render('TestStore/TestStore_admin/TestStore_admin_main');
+    res.render('TestStore/TestStore_admin/TestStore_admin_main', {
+        username: req.session.username,
+        storeID: req.session.storeID,
+    });
 });
 
 
@@ -236,7 +239,7 @@ app.get('/firstStore/menu2', (req, res) => {
     if (!req.session.locationVerified) { //뭔가 이상하다 했더니 이걸 따로 만들어 놓고있네
         return res.status(403).send("🚫 위치 인증이 필요합니다.");
     }
-    //storeID를 가져오지 못해고 undefined로 나와, 뭐가 문제여
+
     const storeId = req.query.storeID;
     const tableNum= req.query.tableNum;
     const sql=`SELECT * FROM menu WHERE store_name="${storeId}";`;
@@ -594,10 +597,11 @@ app.post('/login', (req, res) => {
             return res.send('<script>alert("로그인 실패"); window.location="/login";</script>');
         }
 
-        const user = results[0]; // ✅ 사용자 정보
-        req.session.isAdmin = true;
-        req.session.username = user.username;
-        req.session.storeId = user.id;
+        const user = results[0]; // 사용자 정보
+        req.session.isAdmin = true; //관리자 여부(이거 그 이용자측 관리자가 아니라, 진짜 관리자를 의미할텐데 왜 이게 트루상태입니까)
+        req.session.username = user.username;//사용자 이름
+        req.session.storeID = user.store_name; //매장 id
+        console.log(user.store_name);
 
         res.redirect('/TestStore/TestStore_admin/TestStore_admin_main');
     });
