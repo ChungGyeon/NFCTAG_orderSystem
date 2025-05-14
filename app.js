@@ -5,7 +5,6 @@ const path = require('path');
 const multer  = require('multer');
 const https = require('https');
 const http = require('http');
-const fs = require('fs');
 
 let testPageConnect = false; // db연결 안되면 자동으로 test.ejs열리게 설정
 //const upload = multer({ dest: 'test_img_upload/' }) //multer를 사용해 이미지 저장할 경로,테스트용임
