@@ -447,23 +447,30 @@ app.get('/getMenuOptions', (req, res) => {
 //주문 완료 처리
 app.post('/DoSendOrder', (req, res) => { 
     const { menu, options, totalPrice, tableNum } = req.body;
-        console.log('주문 완료:', menu, options, totalPrice,tableNum); // 주문 완료 로그
+    const storeID = req.session.storeID;
+    //storeID없으면 주문하는 가게가 없다는걸 알림
+    if(!storeID){return res.status(400).json({success: false, message: '죄송합니다 ㅠ \n주문하는 가게를 인식을 못했어요... 다시한번만 알려주시겠어요?'});}
+    else{
+    console.log('주문 완료:', menu, options, totalPrice,tableNum); // 주문 완료 로그
 
-        const order = { menu, options, totalPrice, tableNum };
+    const order = { menu, options, totalPrice, tableNum };
+    global.orders = global.orders || [];
+    global.orders[storeID] = global.orders[storeID];
+    global.orders.push(order);
 
-        global.orders = global.orders || [];
-        global.orders.push(order);
-
-        res.json({ success: true });
-
+    res.json({ success: true });
+    }
 });
 
 
 //주문 취소 처리
 app.post('/DoCancelOrder', (req, res) => {
     const { menu, tableNum } = req.body;
-
-    global.orders = global.orders.filter(order =>
+    const storeID = req.session.storeID;
+    if(!storeID){return res.status(400).json({success: false, message: '죄송합니다 ㅠ \n주문취소하려는 가게를 인식 못했어요... 다시한번만 알려주시겠어요?'});}
+    //global.orders에 storeID키 없이 접근하거나, orders[storeID]가 비어있으면 주문이 없다고 알림
+    if (!global.orders || !global.orders[storeID]) {return res.status(400).json({ success: false, message: '취소할 주문이 없습니다.' });}
+    global.orders[storeID] = global.orders[storeID].filter(order =>
         !(order.menu === menu && order.tableNum == tableNum)
     );
     console.log('테이블번호 :',tableNum,', ',menu,'주문 취소'); // 주문 완료 로그
