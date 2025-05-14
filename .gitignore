@@ -11,7 +11,7 @@
 .env
 #.DS_Store파일무시
 .DS_Store
-#test_img_upload 파일 무시
-./test_img_upload
+#test_img_upload 파일안에 있는 내용물들 무시
+./test_img_upload/*
 #.DS_Store파일 무시
 views/.DS_Store
