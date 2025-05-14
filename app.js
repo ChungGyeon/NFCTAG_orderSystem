@@ -607,14 +607,7 @@ app.get('/logout', (req, res) => {
     });
 });
 
-
-//테스트용 서버 실행화면 확인
-const SubpoRt = 3001;
-app.listen(SubpoRt, () => {
-    console.log(`서버가 ${SubpoRt} 실행됩니다.`);
-});
-
-//이제 서버컴퓨터에는 server.js에서 실행하며, 아래 코드는 server.js에서 app.js를 쓰기 위한 export설정임
-
+//이제 서버컴퓨터에는 server.js에서 실행하며, 아래 코드는 server.js,backserver.js에서 app.js를 쓰기 위한 export설정임
+//테스트 환경은 backserver.jsfmf
 module.exports = app;
 
