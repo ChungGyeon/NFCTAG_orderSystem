@@ -19,7 +19,14 @@
             <ul>
                 <li>
                     <h2>메뉴: <%= order.menu %></h2>
-                    <p>옵션: <%= order.options.map(option => option.name).join(', ') %></p>
+                    <!--<p>옵션: <%= order.options.map(option => option.name).join(', ') %></p>-->
+                    <p>옵션:
+                      <% if (Array.isArray(order.options)) { %>
+                        <%= order.options.map(option => option.name).join(', ') %>
+                      <% } else { %>
+                        선택 없음
+                      <% } %>
+                    </p>
                     <p>총 결제금액: <%= order.totalPrice %>원</p>
                 </li>
             </ul>

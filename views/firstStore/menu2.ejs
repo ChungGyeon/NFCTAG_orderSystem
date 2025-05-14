@@ -127,23 +127,25 @@
   
     function DoSendOrder(name) {
         const tableNum= <%= tableNum %>; //테이블 번호를 받아옴
+        const storeID = '<%= storeID %>'; //가게 아이디를 받아옴
         const selectedOptions = [];
         let totalPrice = selectedMenuPrice;
         document.querySelectorAll('#modal-options input[type="checkbox"]:checked').forEach(checkbox => {
                 const optionId = checkbox.id.replace('option-', ''); // ID 추출
-                const optionName = checkbox.parentElement.textContent.trim(); // 이름 추출
+                let opTionname = checkbox.parentElement.textContent.trim(); // 이름 추출
+                const optionName = opTionname.split('(')[0].trim(); // 괄호 앞 부분만 추출
                 const optionPrice = parseInt(checkbox.getAttribute('data-price'), 10); // 가격 추출
                 totalPrice += optionPrice; // 가격 합산
                 selectedOptions.push({ id: optionId, name: optionName, price: optionPrice });
 
-            });
+            });//아래 개발 다하면 DosendOrder 로 변경
             fetch('/DoSendOrder', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json' //HTTP의 요청이 JSON형식임을 알리는 헤더
                 },
 
-                body: JSON.stringify({ menu: selectedMenu, options: selectedOptions, totalPrice: totalPrice, tableNum: tableNum })
+                body: JSON.stringify({ menu: selectedMenu, options: selectedOptions, totalPrice: totalPrice, tableNum: tableNum, storeID: storeID})
             })
             .then(response => response.json())
             .then(data => {

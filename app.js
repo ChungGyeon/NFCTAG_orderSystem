@@ -446,22 +446,60 @@ app.get('/getMenuOptions', (req, res) => {
 
 //주문 완료 처리
 app.post('/DoSendOrder', (req, res) => { 
-    const { menu, options, totalPrice, tableNum } = req.body;
-    const storeID = req.session.storeID;
+    const { menu, options, totalPrice, tableNum, storeID } = req.body;
+    console.log('storeID 테스트 :', storeID); // 주문 정보 로그
     //storeID없으면 주문하는 가게가 없다는걸 알림
     if(!storeID){return res.status(400).json({success: false, message: '죄송합니다 ㅠ \n주문하는 가게를 인식을 못했어요... 다시한번만 알려주시겠어요?'});}
     else{
     console.log('주문 완료:', menu, options, totalPrice,tableNum); // 주문 완료 로그
 
     const order = { menu, options, totalPrice, tableNum };
-    global.orders = global.orders || [];
-    global.orders[storeID] = global.orders[storeID];
-    global.orders.push(order);
+
+    global.orders = global.orders || {};
+    global.orders[storeID] = global.orders[storeID] || [];
+    global.orders[storeID].push(order);
 
     res.json({ success: true });
     }
 });
+/*
+//파라메터 확인용 Dosendorder, db 연결을 통한 메뉴 저장하려고 했는데 개 빡세네
+app.post('/DoSendOrderTest', (req, res) => {
+    const { menu, options, totalPrice, tableNum } = req.body;
+    const storeID = req.session?.storeID;
+    //storeID없으면 주문하는 가게가 없다는걸 알림
+    if(!storeID){return res.status(400).json({success: false, message: '죄송합니다 ㅠ \n주문하는 가게를 인식을 못했어요... 다시한번만 알려주시겠어요?'});}
 
+    if(options.length === 0){ //옵션 없을때 실행하는 sql
+    const sql= 'INSERT INTO order_status(store_id ,menu_name, totalprice, tableNum) VALUES (?, ?, ?, ?)';
+    db.query(sql, [storeID, menu, totalPrice, tableNum], (err, result) => {
+            if (err) {
+                console.error('옵션 없을 때, 주문 현황을 집어 넣는 곳에서 쿼리 인식을 못했어: ' + err.stack);
+                res.status(500).send('데이터베이스 쿼리 실패');
+                return;
+            }
+        });
+    }
+    else{
+    //optionValues : options의 id, name, price를 각각 option_id, option_name, option_price로 변환, 여러개 있어도 대응 가능
+    if(!options[0].id || !options[0].name || !options[0].price){return res.status(400).json({success: false, message: '옵션이 없어요'});}
+    const optionValues = options.map(option => {option_id, option_name, option_price});
+
+    const sql= 'INSERT INTO order_status(store_id, menu_name, totalprice, option_id, option_name, option_price, tableNum) VALUES (?, ?, ?, ?, ?, ?, ?)';
+
+    db.query(sql, [storeID, menu, totalPrice, option_id, option_name, option_price, tableNum], (err, result) => {
+             if (err) {
+                 console.error('옵션 있을 때, 주문 현황을 집어 넣는 곳에서 쿼리 인식을 못했어: ' + err.stack);
+                 res.status(500).send('데이터베이스 쿼리 실패');
+                 return;
+             }
+         });
+    }
+
+}
+    res.json({ success: true });
+});
+*/
 
 //주문 취소 처리
 app.post('/DoCancelOrder', (req, res) => {
@@ -500,11 +538,26 @@ const sql = `SELECT * FROM menu WHERE store_name="${storeId}"`;
     });
 });
 
+//원래 주문현황 페이지 접근 라우터
 
 app.get('/TestStore/TestStore_admin/Order_related_page/test', (req, res) => {
-        res.render('./TestStore/TestStore_admin/Order_related_page/test', {orders: global.orders || []}); // test.ejs 파일을 렌더링
+        const storeID = req.session?.storeID;
+        const orders = global.orders?.[storeID] || [];
+        res.render('./TestStore/TestStore_admin/Order_related_page/test', {orders}); // test.ejs 파일을 렌더링
 });
-
+/*
+app.get('/TestStore/TestStore_admin/Order_related_page/test', (req, res) => {
+    const sql = 'SELECT * FROM order_status WHERE store_id = ?';
+    const storeID= req.session.storeID;
+    db.query(sql,[storeID], (err, results) => {
+        if (err) {
+            console.error('쿼리가 제대로 명시되지 않았습니다.: ' + err.stack);
+            res.status(500).send('데이터베이스 쿼리 실패');
+            return;
+        }
+        res.render('./TestStore/TestStore_admin/Order_related_page/testnotest', { orders: results }); // test.ejs 파일을 렌더링
+    });
+});*/
 // 로그인 페이지
 app.get('/login', (req, res) => {
     res.render('login/login');
@@ -563,4 +616,3 @@ app.get('/logout', (req, res) => {
 //이제 서버컴퓨터에는 server.js에서 실행하며, 아래 코드는 server.js,backserver.js에서 app.js를 쓰기 위한 export설정임
 //테스트 환경은 backserver.jsfmf
 module.exports = app;
-
