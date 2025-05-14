@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>회원가입</title>
-    <style>
-        body { font-family: sans-serif; padding: 20px; }
-        label { display: block; margin-top: 10px; }
-        input { width: 300px; padding: 5px; }
-        button { margin-top: 20px; padding: 10px 20px; }
-    </style>
+    <link rel="stylesheet" href="/login/login_register.css">
 </head>
 <body>
-<h1>가게 회원가입</h1>
-
 <form action="/register" method="POST">
+    <h2>관리자 회원가입</h2>
+
+    <label for="username">아이디</label>
+    <input type="text" id="username" name="username" required>
+
+    <label for="password">비밀번호</label>
+    <input type="password" id="password" name="password" required>
+
     <label for="store_name">가게 이름</label>
     <input type="text" id="store_name" name="store_name" required>
 
@@ -22,12 +23,6 @@
 
     <label for="address">주소</label>
     <input type="text" id="address" name="address">
-
-    <label for="username">아이디</label>
-    <input type="text" id="username" name="username" required>
-
-    <label for="password">비밀번호</label>
-    <input type="password" id="password" name="password" required>
 
     <button type="submit">회원가입</button>
 </form>
