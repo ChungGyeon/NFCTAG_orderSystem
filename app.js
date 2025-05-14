@@ -265,43 +265,6 @@ app.get('/firstStore/admin', (req, res) => {
     });
 });
 
-
-// post방식 admin_adTomenu 옛날버전, 아직 냄겨두다가 추후에 주석처리 후 기능 이상없는지 확인한 뒤 삭제 예정
-app.post('/admin_adTomenu', (req, res) => {
-    var id = 0;
-    if (req.body.id == 0) {
-        id = 1;
-        insertMenu();
-    } else {
-        const fInd_max_id_from_menu = 'SELECT MAX(id) as max_id FROM menu';
-        db.query(fInd_max_id_from_menu, (err, result) => {
-            if (err) {
-                console.error('id 조회 실패: ' + err.stack);
-                res.status(500).send('데이터베이스 쿼리 실패');
-                return;
-            }
-            id = (result[0].max_id || 0) + 1;
-            insertMenu();
-        });
-    }
-
-    function insertMenu() {
-        const { name, price, description, image_url } = req.body;
-        const storeName = req.session.storeID;
-        console.log("여기가 지금 테스트 중인 거 : ", storeName);
-        const sql = 'INSERT INTO menu (id, name, price, description, image_url, store_name) VALUES (?, ?, ?, ?, ?, ?)';
-        db.query(sql, [id, name, price,description, image_url, storeName], (err, result) => {
-            if (err) {
-                console.error('쿼리가 제대로 명시되지 않았습니다.: ' + err.stack);
-                res.status(500).send('데이터베이스 쿼리 실패');
-                return;
-            }
-            res.redirect('/TestStore/TestStore_admin/Modifying_menu_page/TestStore_menu_modify');
-        });
-    }
-});
-
-
 // firstStore admin 페이지 용 옵션전달
 app.post('/admin_adTooption', (req, res) => {
     const { menu_id, name, additional_price, description} = req.body;
@@ -451,7 +414,6 @@ app.post('/addToMenuInfo', upload.single('myFile'),(req, res) => {
         const { name, price, description } = req.body;
         const image_url = req.file? req.file.filename : null;
         const storeName = req.session.storeID;
-        console.log("지금 테스트중인 곳: ", storeName);
         const sql = 'INSERT INTO menu (id, name, price, description, image_url, store_name) VALUES (?, ?, ?, ?, ?, ?)';
         db.query(sql, [id, name, price,description, image_url, storeName], (err, result) => {
             if (err) {
@@ -536,20 +498,6 @@ app.get('/TestStore/TestStore_admin/Order_related_page/test', (req, res) => {
         res.render('./TestStore/TestStore_admin/Order_related_page/test', {orders: global.orders || []}); // test.ejs 파일을 렌더링
 });
 
-/*도대체 527~538와 똑같은놈이 왜 또 있는건데? 일단 주석처리
-//308~320 테스트용 손님 페이지 임시로 보류
-app.get('/TestStore/TestStore_admin/Modifying_menu_page/TestStore_menu_modify', (req, res) => {
-    const sql = 'SELECT * FROM menu';
-    db.query(sql, (err, results) => {
-        if (err) {
-            console.error('쿼리가 제대로 명시되지 않았습니다.: ' + err.stack);
-            res.status(500).send('데이터베이스 쿼리 실패');
-            return;
-        }
-        const menuResults = results;
-        res.render('/TestStore/TestStore_admin/Modifying_menu_page/TestStore_menu_modify', { items: menuResults}); // test.ejs 파일을 렌더링
-    });
-});*/
 // 로그인 페이지
 app.get('/login', (req, res) => {
     res.render('login/login');
@@ -568,7 +516,6 @@ app.post('/login', (req, res) => {
         req.session.isAdmin = true; //관리자 여부(이거 그 이용자측 관리자가 아니라, 진짜 관리자를 의미할텐데 왜 이게 트루상태입니까)
         req.session.username = user.username;//사용자 이름
         req.session.storeID = user.store_name; //매장 id
-        console.log(user.store_name);
 
         res.redirect('/TestStore/TestStore_admin/TestStore_admin_main');
     });
