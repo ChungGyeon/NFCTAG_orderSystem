@@ -89,6 +89,14 @@ function calculateForMenuProcess() {
             // 서버 응답 처리
             if (data.success) {
                 alert('정산이 완료되었습니다.');
+                document.querySelectorAll('.table-card input.table-check:checked').forEach(checkbox => {
+                    const card = checkbox.closest('.table-card'); // 체크박스가 속한 table-card 찾기
+                    if (card) {
+                        card.remove(); // table-card를 DOM에서 제거
+                    }
+                });
+                document.getElementById("settle-modal").style.display = "none";
+                document.getElementById("DeleteConfirmModal").style.display = "none";
             } else {
                 alert('정산에 실패했습니다.');
             }
