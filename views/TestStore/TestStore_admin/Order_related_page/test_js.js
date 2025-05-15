@@ -68,7 +68,14 @@ function calculateForMenutest() {
 
 //체크된 메뉴 취소하는 모달창 띄우기
 function OpenDeleteConfirmModal(form) {
+    console.log(document.querySelectorAll('.table-card input.table-check:checked'));
+    if(document.querySelectorAll('.table-card input.table-check:checked').length === 0){
+        alert("체크된 메뉴가 없습니다.");
+        return;
+    }
+    else{
     document.getElementById("DeleteConfirmModal").style.display = "block";
+    }
 }
 //위에서 나온 모달창에서 확인 버튼 클릭 시 체그된 메뉴 삭제하는 함수
 function removeCheckedMenu() {
