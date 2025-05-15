@@ -573,9 +573,9 @@ const sql = `SELECT * FROM menu WHERE store_name="${storeId}"`;
 //원래 주문현황 페이지 접근 라우터
 
 app.get('/TestStore/TestStore_admin/Order_related_page/test', (req, res) => {
-        const storeID = req.session?.storeID;
+        const store = req.session?.storeID;
         const orders = global.orders?.[storeID] || [];
-        res.render('./TestStore/TestStore_admin/Order_related_page/test', {orders}); // test.ejs 파일을 렌더링
+        res.render('./TestStore/TestStore_admin/Order_related_page/test', {orders, store}); // test.ejs 파일을 렌더링
 });
 /*
 app.get('/TestStore/TestStore_admin/Order_related_page/test', (req, res) => {

@@ -58,6 +58,7 @@ function calculateForMenuProcess() {
             const total = parseInt(card.dataset.total);
             const items = Array.from(card.querySelectorAll('ul li')).map(li => li.textContent);
             items.forEach(item => {
+            //여기 진짜 공부할 내용이 좋다야
                 const menuMatch = item.match(/메뉴:\s*([^\n]+)/);
                 const menu = menuMatch ? menuMatch[1].trim() : item.trim();
                 menusToSend.push({
