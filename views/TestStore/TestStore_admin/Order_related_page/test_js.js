@@ -197,10 +197,38 @@ function removeCheckedMenu() {
 }
 
 
-
+//일일매출 확인
 function oneTimeCalculateModalOpen() {
     document.getElementById("one-time_calculate").style.display = "block";
+
+    fetch('/getDailySales')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('오늘 매출 데이터:', data.results);
+
+                const container = document.getElementById('sales-results');
+                container.innerHTML = '';
+
+                data.results.forEach(row => {
+                    const div = document.createElement('div');
+                    //요게 일일정산 데이터 보여주는 부분
+                    div.innerHTML = `
+                        <p>${row.created_at} | ${row.menu_name} | ${row.one_time_calculate}원</p>
+                        <hr/>
+                    `;
+                    container.appendChild(div);
+                });
+            } else {
+                console.warn('서버에서 응답을 받지 못함');
+            }
+        })
+        .catch(error => {
+            console.error('매출 데이터 요청 실패:', error);
+        });
 }
+
+
 function closeModal() {
     document.getElementById("settle-modal").style.display = "none";
     document.getElementById("DeleteConfirmModal").style.display = "none";

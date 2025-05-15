@@ -566,6 +566,26 @@ app.post('/calcuDailySales', (req, res) => {
     res.json({ success: true });
 });
 
+//일일매출 조회 라우트
+app.get('/getDailySales', (req, res) => {
+    const sql = `SELECT id, created_at, one_time_calculate, store_name, menu_name
+                         FROM Sales
+                         WHERE DATE_FORMAT(created_at, '%m-%d') = ?`
+    // 오늘 날짜를 MM-DD 형식으로 가져오기 이건 gpt가 다해줬다 ㅋㅋ
+   const pad = n => n.toString().padStart(2, '0');
+   const today = new Date();
+   const formattedDate = `${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
+    db.query(sql, [formattedDate], (err, results) => {
+        if (err) {
+            console.error('쿼리가 제대로 명시되지 않았습니다.: ' + err.stack);
+            res.status(500).send('데이터베이스 쿼리 실패');
+            return;
+        }
+        res.json({ success: true, results: results });
+    });
+
+});
+
 //295~298 테스트 상점 메인페이지 접속
 app.get('/TestStore/TestStore_admin/TestStore_admin_main', (req, res) => {
         res.render('./TestStore/TestStore_admin/TestStore_admin_main'); // test.ejs 파일을 렌더링
