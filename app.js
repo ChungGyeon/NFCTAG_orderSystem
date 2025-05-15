@@ -541,6 +541,15 @@ app.post('/DoCancelOrder', (req, res) => {
 });
 
 
+//정산관련 라우트
+app.post('/calcuDailySales', (req, res) => {
+    const soldMenus = req.body;
+    const storeID = req.session.storeID;
+    console.log(soldMenus);
+
+    res.json({ success: true });
+});
+
 //295~298 테스트 상점 메인페이지 접속
 app.get('/TestStore/TestStore_admin/TestStore_admin_main', (req, res) => {
         res.render('./TestStore/TestStore_admin/TestStore_admin_main'); // test.ejs 파일을 렌더링

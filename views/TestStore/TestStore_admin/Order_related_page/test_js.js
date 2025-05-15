@@ -45,20 +45,51 @@ function calculateForMenu() {
 //정산하기 버튼 관련 스크립트
 
 //정산하기 버튼 로직테스트,
-function calculateForMenutest() {
-    let grandTotal = 0; // 총 합계 초기화
-
-    // 체크된 박스 찾기
-    document.querySelectorAll('.table-card input.table-check:checked').forEach(checkbox => {
-        const card = checkbox.closest('.table-card'); // 체크박스가 속한 카드 찾기
-        const totalPriceElement = card.querySelector('p:nth-child(3)'); // 총 결제금액 요소 찾기
-        if (totalPriceElement) {
-            const totalPrice = parseInt(totalPriceElement.textContent.replace(/[^0-9]/g, ''), 10); // 숫자만 추출
-            grandTotal += totalPrice; // 총 합계에 추가
+function calculateForMenuProcess() {
+    const cards = document.querySelectorAll('.table-card');
+    let grandTotal = 0;
+    let hasData = false;
+    const menusToSend = [];
+    cards.forEach(card => {
+        const checkbox = card.querySelector('.table-check');
+        if (checkbox.checked) {
+            hasData = true;
+            const tableNum = card.dataset.table;
+            const total = parseInt(card.dataset.total);
+            const items = Array.from(card.querySelectorAll('ul li')).map(li => li.textContent);
+            items.forEach(item => {
+                const menuMatch = item.match(/메뉴:\s*([^\n]+)/);
+                const menu = menuMatch ? menuMatch[1].trim() : item.trim();
+                menusToSend.push({
+                    menu,
+                    tableNum,
+                    total
+                });
+            });
         }
     });
-
-    console.log(`총 합계는 ${grandTotal.toLocaleString()}원입니다.`);
+    if (!hasData) {
+        alert("정산할 테이블이 없습니다.");
+    }
+    fetch('/calcuDailySales', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+         },
+        body: JSON.stringify({ dailySales: menusToSend })
+    })
+    .then(response => response.json())
+        .then(data => {
+            // 서버 응답 처리
+            if (data.success) {
+                alert('정산이 완료되었습니다.');
+            } else {
+                alert('정산에 실패했습니다.');
+            }
+        })
+        .catch(error => {
+            console.error('정산 요청 실패:', error);
+    });
 }
 
 
