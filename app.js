@@ -220,11 +220,16 @@ app.get('/TestStore/TestStore_admin/TestStore_admin_main', (req, res) => {
 
 
 // 기본 경로 : 이젠 main페이지가 고객이 접근시 gps인증 라우터로 날려주고, 개발자(db연결 안될때)는 이전 그대로 test.ejs로 날려줌
-app.get('/', (req, res) => { // 주소?table_num=1 같은 형식으로 넘어올거야
+app.get('/', (req, res) => { // 주소?table_num=1 같은 형식으로 넘어올거야,안넘어오면 intro.ejs로
+if(!req.query.storeID && !req.query.tableNum){
+       res.render('./login/intro', {TestPageConnect: testPageConnect});// test.ejs로 날려줌
+    }
+    else{
     const storeId =req.query.storeID;
     const table_num= req.query.tableNum;
 
     res.render('main', {TestPageConnect: testPageConnect, tableNum: table_num, storeID: storeId});// main으로 최초접근 후 다른 곳으로 이동하는 용}
+    }
 });
 
 //firstStore 메뉴 페이지 접속 라우트
