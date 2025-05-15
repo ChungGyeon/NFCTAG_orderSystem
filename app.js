@@ -507,20 +507,39 @@ app.post('/DoSendOrderTest', (req, res) => {
 */
 
 //주문 취소 처리
+/*
 app.post('/DoCancelOrder', (req, res) => {
     const { menu, tableNum } = req.body;
+    console.log('주문 취소 요청:', menu, tableNum); // 주문 취소 요청 로그
     const storeID = req.session.storeID;
     if(!storeID){return res.status(400).json({success: false, message: '죄송합니다 ㅠ \n주문취소하려는 가게를 인식 못했어요... 다시한번만 알려주시겠어요?'});}
     //global.orders에 storeID키 없이 접근하거나, orders[storeID]가 비어있으면 주문이 없다고 알림
     if (!global.orders || !global.orders[storeID]) {return res.status(400).json({ success: false, message: '취소할 주문이 없습니다.' });}
     global.orders[storeID] = global.orders[storeID].filter(order =>
-        !(order.menu === menu && order.tableNum == tableNum)
+        !(order.menu == menu && order.tableNum == tableNum)
     );
     console.log('테이블번호 :',tableNum,', ',menu,'주문 취소'); // 주문 완료 로그
     res.json({ success: true });
+});*/
+
+app.post('/DoCancelOrder', (req, res) => {
+    const Itemss = req.body.items; // [{ menu: 'X', tableNum: '1' }, ...]
+    const storeID = req.session.storeID;
+    if(!storeID){return res.status(400).json({success: false, message: '죄송합니다 ㅠ \n주문취소하려는 가게를 인식 못했어요... 다시한번만 알려주시겠어요?'});}
+    if (!global.orders || !global.orders[storeID]) {return res.status(400).json({ success: false, message: '취소할 주문이 없습니다.' });}
+    //주문 취소 요청 잘 날라오나 확인용 로그
+    Itemss.forEach(item => {
+        console.log('주문 취소 요청:', item.menu, item.tableNum);
+    });
+    for (const { menu, tableNum } of Itemss) {
+            global.orders[storeID] = global.orders[storeID].filter(order =>
+                !(order.menu === menu && Number(order.tableNum) === Number(tableNum))
+            );
+            console.log('테이블번호 :',tableNum,', ',menu,'주문 취소'); // 주문 완료 로그
+    }
+
+    res.json({ success: true });
 });
-
-
 
 
 //295~298 테스트 상점 메인페이지 접속

@@ -79,6 +79,7 @@ function OpenDeleteConfirmModal(form) {
 }
 //위에서 나온 모달창에서 확인 버튼 클릭 시 체그된 메뉴 삭제하는 함수
 function removeCheckedMenu() {
+/*
     //form데이터에 선택한 메뉴를 담고, 이를 서버에 전송해, 서버 메모리 안에 있는 메뉴를 삭제 요청
     const formData = new FormData();
     const menuItems = document.querySelectorAll('.table-card input.table-check:checked');
@@ -109,7 +110,37 @@ function removeCheckedMenu() {
             .catch(error => {
                 console.error('취소 요청 실패:', error);
             });
-    }
+    }*/
+        const menuItems = document.querySelectorAll('.table-card input.table-check:checked');
+
+        if (menuItems.length > 0) {
+            const itemsToDelete = [];
+
+            menuItems.forEach(checkbox => {
+                const card = checkbox.closest('.table-card');
+                const menu = card.querySelector('h2').textContent.replace('메뉴: ', '').trim();
+                const tableNum = card.dataset.table;
+
+                itemsToDelete.push({ menu, tableNum });
+            });
+
+            fetch('/DoCancelOrder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ items: itemsToDelete })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('삭제 성공:', data);
+                    }
+                })
+                .catch(error => {
+                    console.error('삭제 요청 실패:', error);
+                });
+        }
     // 체크된 table-card 요소를 모두 찾음
     document.querySelectorAll('.table-card input.table-check:checked').forEach(checkbox => {
         const card = checkbox.closest('.table-card'); // 체크박스가 속한 table-card 찾기
@@ -119,6 +150,8 @@ function removeCheckedMenu() {
     });
     document.getElementById("DeleteConfirmModal").style.display = "none";
 }
+
+
 
 function oneTimeCalculateModalOpen() {
     document.getElementById("one-time_calculate").style.display = "block";
