@@ -568,14 +568,16 @@ app.post('/calcuDailySales', (req, res) => {
 
 //일일매출 조회 라우트
 app.get('/getDailySales', (req, res) => {
+    const storeID = req.session.storeID;
+    if(!storeID){return res.status(400).json({success: false, message: '죄송합니다 ㅠ \n정산하려는 가게를 인식 못했어요... 다시한번만 알려주시겠어요?'});}
     const sql = `SELECT id, created_at, one_time_calculate, store_name, menu_name
                          FROM Sales
-                         WHERE DATE_FORMAT(created_at, '%m-%d') = ?`
+                         WHERE store_name = ? AND DATE_FORMAT(created_at, '%m-%d') = ?`
     // 오늘 날짜를 MM-DD 형식으로 가져오기 이건 gpt가 다해줬다 ㅋㅋ
    const pad = n => n.toString().padStart(2, '0');
    const today = new Date();
    const formattedDate = `${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
-    db.query(sql, [formattedDate], (err, results) => {
+    db.query(sql, [storeID,formattedDate], (err, results) => {
         if (err) {
             console.error('쿼리가 제대로 명시되지 않았습니다.: ' + err.stack);
             res.status(500).send('데이터베이스 쿼리 실패');
