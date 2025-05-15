@@ -545,6 +545,8 @@ app.post('/DoCancelOrder', (req, res) => {
 app.post('/calcuDailySales', (req, res) => {
     const soldMenus = req.body;
     const storeID = req.session.storeID;
+    if(!storeID){return res.status(400).json({success: false, message: '죄송합니다 ㅠ \n정산하려는 가게를 인식 못했어요... 다시한번만 알려주시겠어요?'});}
+
     console.log(soldMenus);
 
     res.json({ success: true });
@@ -573,8 +575,8 @@ const sql = `SELECT * FROM menu WHERE store_name="${storeId}"`;
 //원래 주문현황 페이지 접근 라우터
 
 app.get('/TestStore/TestStore_admin/Order_related_page/test', (req, res) => {
-        const store = req.session?.storeID;
-        const orders = global.orders?.[storeID] || [];
+        const store = req.session.storeID;
+        const orders = global.orders?.[store] || [];
         res.render('./TestStore/TestStore_admin/Order_related_page/test', {orders, store}); // test.ejs 파일을 렌더링
 });
 /*

@@ -69,6 +69,14 @@ function calculateForMenuProcess() {
             });
         }
     });
+    if(!document.getElementById("storeName").textContent.trim()){
+        alert("가게를 인식할 수 없습니다.\n 다시 로그인 해주세요");
+        return;
+    }
+    else{
+        const storeName = document.getElementById("storeName").textContent.trim();
+        menusToSend.push({storeName});
+    }
     if (!hasData) {
         alert("정산할 테이블이 없습니다.");
     }
