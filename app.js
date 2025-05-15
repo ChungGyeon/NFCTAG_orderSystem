@@ -507,7 +507,7 @@ app.post('/DoSendOrderTest', (req, res) => {
 */
 
 //주문 취소 처리
-/*
+/* 여긴 DoCancelOrder 이전 코드
 app.post('/DoCancelOrder', (req, res) => {
     const { menu, tableNum } = req.body;
     console.log('주문 취소 요청:', menu, tableNum); // 주문 취소 요청 로그
@@ -521,7 +521,6 @@ app.post('/DoCancelOrder', (req, res) => {
     console.log('테이블번호 :',tableNum,', ',menu,'주문 취소'); // 주문 완료 로그
     res.json({ success: true });
 });*/
-
 app.post('/DoCancelOrder', (req, res) => {
     const Itemss = req.body.items; // [{ menu: 'X', tableNum: '1' }, ...]
     const storeID = req.session.storeID;
