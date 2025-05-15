@@ -73,10 +73,7 @@ function calculateForMenuProcess() {
         alert("가게를 인식할 수 없습니다.\n 다시 로그인 해주세요");
         return;
     }
-    else{
-        const storeName = document.getElementById("storeName").textContent.trim();
-        menusToSend.push({storeName});
-    }
+    const storeName = document.getElementById("storeName").textContent.trim();
     if (!hasData) {
         alert("정산할 테이블이 없습니다.");
     }
@@ -85,7 +82,7 @@ function calculateForMenuProcess() {
         headers: {
             'Content-Type': 'application/json'
          },
-        body: JSON.stringify({ dailySales: menusToSend })
+        body: JSON.stringify({ dailySales: menusToSend, storeName })
     })
     .then(response => response.json())
         .then(data => {

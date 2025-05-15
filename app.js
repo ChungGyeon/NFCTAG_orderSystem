@@ -543,12 +543,26 @@ app.post('/DoCancelOrder', (req, res) => {
 
 //정산관련 라우트
 app.post('/calcuDailySales', (req, res) => {
-    const soldMenus = req.body;
     const storeID = req.session.storeID;
     if(!storeID){return res.status(400).json({success: false, message: '죄송합니다 ㅠ \n정산하려는 가게를 인식 못했어요... 다시한번만 알려주시겠어요?'});}
+    const soldMenus = req.body.dailySales;
+    const storeName = req.body.storeName;
+    console.log('storename : ', storeName);
+    // 메뉴 데이터가 없으면 종료
+    if (!Array.isArray(soldMenus) || soldMenus.length === 0) {
+        return res.status(400).json({ success: false, message: '정산할 데이터가 없습니다.' });
+    }
 
-    console.log(soldMenus);
+    // 여러 행을 한 번에 저장하는 쿼리 준비
+    const values = soldMenus.map(menuObj => [menuObj.total,storeName, menuObj.menu]);
+    const sql = 'INSERT INTO Sales (one_time_calculate, store_name, menu_name) VALUES ?';
 
+    db.query(sql, [values], (err, result) => {
+        if (err) {
+            console.error('정산 저장 실패:', err);
+            return res.status(500).json({ success: false, message: 'DB 저장 실패' });
+        }
+    });
     res.json({ success: true });
 });
 
