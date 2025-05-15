@@ -3,13 +3,13 @@ const session = require('express-session');
 const mysql = require('mysql');
 const path = require('path');
 const multer  = require('multer');
-const https = require('https');
-const http = require('http');
+//const https = require('https');
+//const http = require('http');
 
 let testPageConnect = false; // db연결 안되면 자동으로 test.ejs열리게 설정
 //const upload = multer({ dest: 'test_img_upload/' }) //multer를 사용해 이미지 저장할 경로,테스트용임
 
-//7~23 line : multer를 사용해 이미지 저장할 경로
+//12~28 line : multer를 사용해 이미지 저장할 경로
 const upload = multer({  
     storage: multer.diskStorage({
       	filename(req, file, done) {
@@ -27,7 +27,7 @@ const upload = multer({
     }),
 });
 
-//26~33 line : 필요 변수 선언
+//30~44 line : 필요 변수 선언
 const bodyParser = require('body-parser');
 const app = express();
 
@@ -48,7 +48,7 @@ app.use(session({ // 세션 설정
 const storeLocations = {
     firstStore: { lat: 36.625688, lng: 127.465233 },
 };
-//관리자 외에는 접속이 불가 하도록 하는 관리자 인증 미들 웨어
+//관리자 외에는 접속이 불가 하도록 하는 관리자 인증 미들 웨어 52~58line
 function checkAdminAuth(req, res, next) {
     if (req.session.isAdmin) {
         return next();
@@ -56,7 +56,7 @@ function checkAdminAuth(req, res, next) {
         res.status(403).send("관리자 로그인이 필요합니다.");
     }
 }
-
+//위도 경도 거리 계산 함수 60~70line
 function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
     const R = 6371000;
     const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -69,7 +69,7 @@ function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
     return R * c;
 }
 
-//39~74 line : db 접속코드
+//mysql DB 연결 72~80line
 const db = mysql.createConnection({
     host: process.env.TAGORDER_DB_HOST,
     user: process.env.TAGORDER_DB_USER,
@@ -79,16 +79,7 @@ const db = mysql.createConnection({
     multipleStatements: true // 여러 쿼리 실행을 허용
 });
 
-//세션환경설정
-/*
-로그인할때 써먹자, 테이블 번호는 쿼리마라메터만 사용하도록 하지
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: { maxAge: 300000} // 세션 유지 시간 (5분)}
-  )};*/
-
+//db 연결 83~108line
 db.connect((err) => {
     if (err) {
         console.error('데이터베이스 연결 실패: ' + err.stack);
@@ -117,7 +108,7 @@ db.connect((err) => {
 });
 
 
-// ✅ 위치 인증 라우트
+//위치 인증 라우트 111~139line
 app.post('/verifyLocation2', (req, res) => {
     const { store, lat, lng } = req.body;
     const sql = `SELECT latitude, longitude FROM store_location WHERE store_id = ?`;
@@ -147,7 +138,7 @@ app.post('/verifyLocation2', (req, res) => {
     });
 });
 
-
+//구형 위치 인증 라우트 142~156line
 app.post('/verifyLocation', (req, res) => {
     const { lat, lng, store } = req.body;
     const storeGPS = storeLocations[store];
@@ -164,7 +155,7 @@ app.post('/verifyLocation', (req, res) => {
     }
 });
 
-//가게 GPS 저장 라우트 아마 sql연동될때 사용하는 위치 저장 라우터
+//가게 GPS 저장 + sql연동될때 사용하는 위치 저장 라우터 159~183line
 app.post('/saveStoreLocation2', (req, res) => {
     const store = req.session.storeID;  // ← 세션에서 로그인한 사용자 ID 사용
     const { lat, lng } = req.body;
@@ -190,7 +181,8 @@ app.post('/saveStoreLocation2', (req, res) => {
         return res.json({ success: true });
     });
 });
-//gps 위치 저장 처리
+
+//구형 gps 위치 저장 처리 186~202line
 app.post('/saveStoreLocation', (req, res) => {
     const { store, lat, lng } = req.body;
 
@@ -207,20 +199,21 @@ app.post('/saveStoreLocation', (req, res) => {
     console.log(`✅ [${store}] 위치 메모리 저장 완료 → 위도: ${lat}, 경도: ${lng}`);
     return res.json({ success: true });
 });
-//관리용 페이지 로그인 여부 체크
-app.get('/TestStore/TestStore_admin/TestStore_admin_main', (req, res) => {
+
+//상점 관리자용 메인 페이지 라우트 204~213line
+app.get('/UserStore/UserStore_admin/UserStore_admin_main', (req, res) => {
     if (!req.session.storeID) {
         return res.redirect('/login');
     }
-    res.render('TestStore/TestStore_admin/TestStore_admin_main', {
+    res.render('./UserStore/UserStore_admin/UserStore_admin_main', {
         username: req.session.username,
         storeID: req.session.storeID,
     });
 });
 
 
-// 기본 경로 : 이젠 main페이지가 고객이 접근시 gps인증 라우터로 날려주고, 개발자(db연결 안될때)는 이전 그대로 test.ejs로 날려줌
-app.get('/', (req, res) => { // 주소?table_num=1 같은 형식으로 넘어올거야,안넘어오면 intro.ejs로
+// 기본 경로 : 이젠 main페이지가 고객이 접근시 gps인증 라우터로 날려주고, 개발자(db연결 안될때)는 이전 그대로 settlementPage.ejs로 날려줌, 216~226line
+app.get('/', (req, res) => { // 주소/?storeID=firstStore&tableNum=1 형식으로 파라메터를 주어지면 고객으로 접근, 아니면 관리자용 로그인으로 이동
 if(!req.query.storeID && !req.query.tableNum){
        res.render('./login/intro', {TestPageConnect: testPageConnect});// test.ejs로 날려줌
     }
@@ -232,9 +225,9 @@ if(!req.query.storeID && !req.query.tableNum){
     }
 });
 
-//firstStore 메뉴 페이지 접속 라우트
-app.get('/firstStore/menu2', (req, res) => {
-    if (!req.session.locationVerified) { //뭔가 이상하다 했더니 이걸 따로 만들어 놓고있네
+//메뉴 페이지 접속 라우트 229~249line
+app.get('/UserStore/UserStore_guest/menulist', (req, res) => {
+    if (!req.session.locationVerified) {
         return res.status(403).send("🚫 위치 인증이 필요합니다.");
     }
 
@@ -251,26 +244,11 @@ app.get('/firstStore/menu2', (req, res) => {
         //const menuOptionResults = results[1];
         const menuResults = results;
         //메인메뉴는 items, 추가옵션은 options, tableNum은 nfc태그에 부여된 테이블 번호를 넘김
-        res.render('firstStore/menu2', { items:menuResults, tableNum:tableNum, storeID:storeId});//items: menuResults, options: menuOptionResults
-        //res.render('firstStore/menu2', { items: menuResults, options: menuOptionResults });
+        res.render('UserStore/UserStore_guest/menulist', { items:menuResults, tableNum:tableNum, storeID:storeId});//items: menuResults, options: menuOptionResults
     });
 });
 
-//60~177line firstStore 관리자 페이지, 이젠 모든 상점의 메뉴를 확인해볼 수 있는 페이지네,
-app.get('/firstStore/admin', (req, res) => {
-    const sql = 'SELECT * FROM menu';
-    db.query(sql, (err, results) => {
-        if (err) {
-            console.error('쿼리가 제대로 명시되지 않았습니다.: ' + err.stack);
-            res.status(500).send('데이터베이스 쿼리 실패');
-            return;
-        }
-        res.render('firstStore/admin', { items1: results });
-        //items1 -> admin.ejs to line 12
-    });
-});
-
-// firstStore admin 페이지 용 옵션전달
+//개발자 admin 페이지 용 옵션전달 252~264line
 app.post('/admin_adTooption', (req, res) => {
     const { menu_id, name, additional_price, description} = req.body;
 
@@ -285,7 +263,7 @@ app.post('/admin_adTooption', (req, res) => {
     });
 });
 
-//TestStore modifying_menu_page 용 옵션전달
+//modifying_menu_page 용 옵션전달 267~279line
 app.post('/test_adTooption', (req, res) => {
     const { targetOfAdditionalMenu_id: menu_id, name, additional_price, description} = req.body;
 
@@ -296,27 +274,12 @@ app.post('/test_adTooption', (req, res) => {
             return res.status(500).send('옵션 추가 실패');
         }
         console.log('옵션 추가 성공:', result);
-        res.redirect('/TestStore/TestStore_admin/Modifying_menu_page/TestStore_menu_modify'); // 성공 후 관리자 페이지로 이동
+        res.redirect('/UserStore/UserStore_admin/Modifying_menu_page/UserStore_menu_modify'); // 성공 후 관리자 페이지로 이동
     });
 });
 
 
-//흠..이건 메뉴 옵션을 불러오는 코드
-//modal test랑 합칠때 쓰면 될
-app.get('/여기 뭘로 이름을 정하지', (req, res) => {
-    const menuId = req.params.menuId;
-    const sql = 'SELECT mo.id, mo.name, mo.price, mo.description FROM menu_option mo JOIN menu m ON m.id = mo.menu_id WHERE m.id = ?';
-    db.query(sql, [menuId], (err, results) => {
-        if (err) {
-            console.error('옵션 조회 실패:', err.stack);
-            res.status(500).send('옵션 조회 실패');
-            return;
-        }
-        res.json(results);
-    });
-});
-
-// post방식 admin_addel /버튼으로 삭제 시켜버리기
+// 개발자 용 메뉴 삭제 라우트 282~295line
 app.post('/admin_addel', (req, res) => { 
     const { id } = req.body;
     console.log('버튼삭제 요청:', req.body); //일단 수시로 확인하기 위한 로그
@@ -327,7 +290,7 @@ app.post('/admin_addel', (req, res) => {
             res.status(500).send('데이터베이스 쿼리 실패');
             return;
         }
-        res.redirect('./TestStore/TestStore_admin/Modifying_menu_page/TestStore_menu_modify');
+        res.redirect('./UserStore/UserStore_admin/Modifying_menu_page/UserStore_menu_modify');
     });
 });
 
@@ -369,33 +332,18 @@ app.post('/upload', (req, res) => {
 
 
 //////////
-//이곳에 firstStore 어드민 이미지 업로드 로직 구현 예정
-
-/*
-upload.single() : 파일이 하나일 때 사용 하는 함수, 인수로는 html상에서 전달하는 객체의 name을 적는다.
-인수인 myFile은 나중에 수정예정, html에서도 수정요구
-*/
-//firstStore 어드민용 메뉴추가 이미지 업로드 구축
-/*
+//menu_modify.ejs에서 이미지 선택 후 업로드 클릭 시 서버 로그에 파일 디테일을 출력함, 336~342line
 app.post('/StoreImg_upload', upload.single('myFile'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: "파일이 업로드되지 않았습니다." });
     }
     //res.json({ filename: req.file.originalname });
-    res.redirect(`firstStore/admin?filename=${encodeURIComponent(req.file.originalname)}`);
-});*/
-//test-menu-modify용 메뉴추가 이미지 업로드 구축
-app.post('/StoreImg_upload', upload.single('myFile'), (req, res) => {
-    if (!req.file) {
-        return res.status(400).json({ error: "파일이 업로드되지 않았습니다." });
-    }
-    //res.json({ filename: req.file.originalname });
-    res.redirect(`TestStore/TestStore_admin/Modifying_menu_page/TestStore_menu_modify?filename=${encodeURIComponent(req.file.originalname)}`);
+    res.redirect(`UserStore/UserStore_admin/Modifying_menu_page/UserStore_menu_modify?filename=${encodeURIComponent(req.file.originalname)}`);
 });
 
 /*이미지 전송과, 메뉴 정보를 동시에 처리하는 로직, 혼자 도전해볼게 25/05/04 완성하긴 했다. 근데 위에 기본 메뉴추가 라우터랑 헷갈리니 주의할 것
-이전꺼 227~309*/
-
+347~380line
+*/
 app.post('/addToMenuInfo', upload.single('myFile'),(req, res) => {
     console.log('req.file:', req.file);
     var id = 0;
@@ -426,7 +374,7 @@ app.post('/addToMenuInfo', upload.single('myFile'),(req, res) => {
                 res.status(500).send('데이터베이스 쿼리 실패');
                 return;
             }
-            res.redirect('/TestStore/TestStore_admin/Modifying_menu_page/TestStore_menu_modify');
+            res.redirect('/UserStore/UserStore_admin/Modifying_menu_page/UserStore_menu_modify');
         });
     }
 });
@@ -435,7 +383,7 @@ app.post('/addToMenuInfo', upload.single('myFile'),(req, res) => {
 //클라이언트가 이미지를 요청할 때 사용할 경로를 추가, 보안에 주의요구됨
 app.use("/test_img_upload", express.static(path.join(__dirname, "test_img_upload/")));
 
-// 손님이 메뉴를 선택시 추가옵션을 불러오는 코드, 228~240
+// 손님이 메뉴를 선택시 추가옵션을 불러오는 코드, 386~398line
 app.get('/getMenuOptions', (req, res) => {
     const menuId = req.query.id;
     const sql = 'SELECT * FROM menu_option WHERE menu_id = ?';
@@ -449,7 +397,7 @@ app.get('/getMenuOptions', (req, res) => {
     });
 });
 
-//주문 완료 처리
+//주문 완료 처리 401~417line
 app.post('/DoSendOrder', (req, res) => { 
     const { menu, options, totalPrice, tableNum, storeID } = req.body;
     console.log('storeID 테스트 :', storeID); // 주문 정보 로그
@@ -521,6 +469,8 @@ app.post('/DoCancelOrder', (req, res) => {
     console.log('테이블번호 :',tableNum,', ',menu,'주문 취소'); // 주문 완료 로그
     res.json({ success: true });
 });*/
+
+//주문 취소 처리 474~491line
 app.post('/DoCancelOrder', (req, res) => {
     const Itemss = req.body.items; // [{ menu: 'X', tableNum: '1' }, ...]
     const storeID = req.session.storeID;
@@ -541,7 +491,7 @@ app.post('/DoCancelOrder', (req, res) => {
 });
 
 
-//정산관련 라우트
+//일일정산 관련 라우트 495~517line
 app.post('/calcuDailySales', (req, res) => {
     const storeID = req.session.storeID;
     if(!storeID){return res.status(400).json({success: false, message: '죄송합니다 ㅠ \n정산하려는 가게를 인식 못했어요... 다시한번만 알려주시겠어요?'});}
@@ -566,7 +516,7 @@ app.post('/calcuDailySales', (req, res) => {
     res.json({ success: true });
 });
 
-//일일매출 조회 라우트
+//일일매출 조회 라우트 520~540line
 app.get('/getDailySales', (req, res) => {
     const storeID = req.session.storeID;
     if(!storeID){return res.status(400).json({success: false, message: '죄송합니다 ㅠ \n정산하려는 가게를 인식 못했어요... 다시한번만 알려주시겠어요?'});}
@@ -588,13 +538,13 @@ app.get('/getDailySales', (req, res) => {
 
 });
 
-//295~298 테스트 상점 메인페이지 접속
-app.get('/TestStore/TestStore_admin/TestStore_admin_main', (req, res) => {
-        res.render('./TestStore/TestStore_admin/TestStore_admin_main'); // test.ejs 파일을 렌더링
+//식당 관리자 메인 페이지 이동 스크립트
+app.get('/UserStore/UserStore_admin/UserStore_admin_main', (req, res) => {
+        res.render('./UserStore/UserStore_admin/UserStore_admin_main');
     });
 
-//테스트 상점 메인관리자 페이지 이동 스크립트
-app.get('/TestStore/TestStore_admin/Modifying_menu_page/TestStore_menu_modify', (req, res) => {
+//식당 관리자 메뉴수정 페이지 이동 스크립트 547~559line
+app.get('/UserStore/UserStore_admin/Modifying_menu_page/UserStore_menu_modify', (req, res) => {
 const storeId=req.session.storeID;
 const sql = `SELECT * FROM menu WHERE store_name="${storeId}"`;
     db.query(sql, (err, results) => {
@@ -604,19 +554,18 @@ const sql = `SELECT * FROM menu WHERE store_name="${storeId}"`;
             return;
         }
         const menuResults = results;
-        res.render('./TestStore/TestStore_admin/Modifying_menu_page/TestStore_menu_modify', { items: menuResults}); // test.ejs 파일을 렌더링
+        res.render('./UserStore/UserStore_admin/Modifying_menu_page/UserStore_menu_modify', { items: menuResults});
     });
 });
 
-//원래 주문현황 페이지 접근 라우터
-
-app.get('/TestStore/TestStore_admin/Order_related_page/test', (req, res) => {
+//주문현황 페이지 이동 스크립트 562~566line
+app.get('/UserStore/UserStore_admin/Order_related_page/settlementPage', (req, res) => {
         const store = req.session.storeID;
         const orders = global.orders?.[store] || [];
-        res.render('./TestStore/TestStore_admin/Order_related_page/test', {orders, store}); // test.ejs 파일을 렌더링
+        res.render('./UserStore/UserStore_admin/Order_related_page/settlementPage', {orders, store});
 });
 /*
-app.get('/TestStore/TestStore_admin/Order_related_page/test', (req, res) => {
+app.get('/UserStore/UserStore_admin/Order_related_page/settlementPage', (req, res) => {
     const sql = 'SELECT * FROM order_status WHERE store_id = ?';
     const storeID= req.session.storeID;
     db.query(sql,[storeID], (err, results) => {
@@ -625,14 +574,14 @@ app.get('/TestStore/TestStore_admin/Order_related_page/test', (req, res) => {
             res.status(500).send('데이터베이스 쿼리 실패');
             return;
         }
-        res.render('./TestStore/TestStore_admin/Order_related_page/testnotest', { orders: results }); // test.ejs 파일을 렌더링
+        res.render('.//UserStore/UserStore_admin/Order_related_page/testnotest', { orders: results }); // test.ejs 파일을 렌더링
     });
 });*/
 // 로그인 페이지
 app.get('/login', (req, res) => {
     res.render('login/login');
 });
-
+//로그인 처리 스크립트 585~601line
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
     const sql = 'SELECT * FROM store_user WHERE username = ? AND password = ?';
@@ -647,7 +596,7 @@ app.post('/login', (req, res) => {
         req.session.username = user.username;//사용자 이름
         req.session.storeID = user.store_name; //매장 id
 
-        res.redirect('/TestStore/TestStore_admin/TestStore_admin_main');
+        res.redirect('/UserStore/UserStore_admin/UserStore_admin_main');
     });
 });
 
@@ -655,7 +604,7 @@ app.post('/login', (req, res) => {
 app.get('/register', (req, res) => {
     res.render('login/register'); // 파일도 views/login/register.ejs로 넣었을 경우
 });
-// 회원가입 처리 POST
+// 회원가입 처리 라우트 608~623line
 app.post('/register', (req, res) => {
     const { store_name, phone_number, address, username, password } = req.body;
 
@@ -672,16 +621,33 @@ app.post('/register', (req, res) => {
         res.redirect('/login'); // 회원가입 후 로그인 페이지로 이동
     });
 });
+
 // 소개 페이지
 app.get('/intro', (req, res) => {
     res.render('login/intro');
 });
-// 로그아웃 후 페이지가 있다면
+
+// 로그아웃 후 페이지가 있다면 로그아웃 후 페이지로 이동, 없다면 로그인 페이지로 이동 631~635line
 app.get('/logout', (req, res) => {
     req.session.destroy(() => {
         res.render('login/logout'); // logout.ejs가 존재할 경우
     });
 });
+
+//개발용 모든 메뉴 페이지 접속, 추후 삭제해야함
+app.get('/firstStore/admin', (req, res) => {
+    const sql = 'SELECT * FROM menu';
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error('쿼리가 제대로 명시되지 않았습니다.: ' + err.stack);
+            res.status(500).send('데이터베이스 쿼리 실패');
+            return;
+        }
+        res.render('firstStore/admin', { items1: results });
+        //items1 -> admin.ejs to line 12
+    });
+});
+
 
 //이제 서버컴퓨터에는 server.js에서 실행하며, 아래 코드는 server.js,backserver.js에서 app.js를 쓰기 위한 export설정임
 //테스트 환경은 backserver.jsfmf

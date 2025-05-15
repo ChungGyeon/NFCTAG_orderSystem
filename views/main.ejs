@@ -45,7 +45,7 @@
                         .then(res => res.json())
                         .then(data => {
                             if (data.allowed) {
-                                window.location.href = `/firstStore/menu2?storeID=${encodeURIComponent(storeID)}&tableNum=${encodeURIComponent(tableNum)}`;
+                                window.location.href = `/UserStore/UserStore_guest/menulist?storeID=${encodeURIComponent(storeID)}&tableNum=${encodeURIComponent(tableNum)}`;
                             } else {
                                 alert("현재 위치가 반경 50m 밖입니다.\n접속이 제한됩니다.");
                             }

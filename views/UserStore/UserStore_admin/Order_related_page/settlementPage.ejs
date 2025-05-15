@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>TagOrder 테스트 페이지</title>
+    <link href="/UserStore/UserStore_admin/Order_related_page/ForsettlementPage.css" rel="stylesheet">
+    <script defer src="/UserStore/UserStore_admin/Order_related_page/settlement.js"></script>
+</head>
+<body>
+<div class="test-container">
+    <header>
+        <h1 id="storeName"><%= store %></h1>
+    </header>
+    <main id="main-content">
+        <% orders.forEach(order => { %>
+        <div class="table-card" data-table="<%= order.tableNum %>" data-total="<%= order.totalPrice %>">
+            <h3>테이블 <%= order.tableNum %></h3>
+            <ul>
+                <li>
+                    <h2>메뉴: <%= order.menu %></h2>
+                    <!--<p>옵션: <%= order.options.map(option => option.name).join(', ') %></p>-->
+                    <p>옵션:
+                      <% if (Array.isArray(order.options)) { %>
+                        <%= order.options.map(option => option.name).join(', ') %>
+                      <% } else { %>
+                        선택 없음
+                      <% } %>
+                    </p>
+                    <p>총 결제금액: <%= order.totalPrice %>원</p>
+                </li>
+            </ul>
+            <label><input type="checkbox" class="table-check"> 정산 대상 선택</label>
+        </div>
+        <% }) %>
+    </main>
+    <aside>
+        <!--아래 세 개 버튼의 온클릭은 따로 함수 제작 필요 25.4.29-->
+        <button class="aside adjust-button" onclick="calculateForMenu()">정산하기</button>
+        <button class="aside adjust-button-cancelVer" onclick="OpenDeleteConfirmModal(this)">취소하기</button>
+        <button class="aside adjust-button-cancelVer" onclick="oneTimeCalculateModalOpen()">이전 정산 기록 확인</button>
+    </aside>
+
+    <section><!--삭제 확인 모달-->
+        <div id="DeleteConfirmModal" class="DeleteConfirmModal">
+            <div class="DeleteConfirmModal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <p>정말로 취소하겠습니까??</p>
+                <div class="DeleteConfirmModal-buttons">
+                    <button onclick="removeCheckedMenu()">예</button>
+                    <button onclick="closeModal()">아니오</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section><!--일일 정산 매출 확인-->
+        <div id="one-time_calculate" class="one-time_calculate">
+            <div class="one-time_calculate-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <p>일일 매출 현황</p>
+                <p><strong>시간       |       메뉴        |           가격</p>
+                <div id="sales-results"></div>
+                <div class="one-time_calculate-buttons">
+                    <button onclick="closeModal()">닫기</button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</div>
+
+<div id="settle-modal" class="modal-overlay">
+    <div class="modal-content">
+        <h2>정산 결과</h2>
+        <div id="settle-result"></div>
+        <button onclick="closeModal()">닫기</button>
+        <button onclick="calculateForMenuProcess()">정산하기</button>
+    </div>
+</div>
+</body>
+</html>
