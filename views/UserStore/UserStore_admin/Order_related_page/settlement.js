@@ -10,7 +10,7 @@ function calculateForMenu() {
            const cards = document.querySelectorAll('.table-card');
            let grandTotal = 0;
            let hasData = false;
-          //현재 문제, card.dataset.table이 undefined로 나옴, 이에 따라 총합계가 NaN으로 나옴
+
            cards.forEach(card => {
                const checkbox = card.querySelector('.table-check');
                if (checkbox.checked) {

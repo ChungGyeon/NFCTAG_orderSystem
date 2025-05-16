@@ -515,7 +515,7 @@ app.post('/DoCancelOrder', (req, res) => {
 });
 
 
-//일일정산 관련 라우트 495~517line
+//메뉴 정산하는 라우트 495~517line
 app.post('/calcuDailySales', (req, res) => {
     const storeID = req.session.storeID;
     if(!storeID){return res.status(400).json({success: false, message: '죄송합니다 ㅠ \n정산하려는 가게를 인식 못했어요... 다시한번만 알려주시겠어요?'});}
@@ -535,6 +535,16 @@ app.post('/calcuDailySales', (req, res) => {
         if (err) {
             console.error('정산 저장 실패:', err);
             return res.status(500).json({ success: false, message: 'DB 저장 실패' });
+        }
+        // 정산된 메뉴들을 메모리에서 제거
+        if (global.orders && global.orders[storeID]) {
+            soldMenus.forEach(menuObj => {
+                const menuName = menuObj.menu;
+
+                // 해당 메뉴를 모두 제거
+                global.orders[storeID] = global.orders[storeID].filter(order => order.menu !== menuName);
+                console.log(`정산 후 '${menuName}' 삭제 완료`);
+            });
         }
     });
     res.json({ success: true });
