@@ -66,6 +66,7 @@ app.use(session({ // 세션 설정
 
 //gps 설정 관련, gps라우터는  112 line부터
 //메모리 저장용 (기본 위치), 서버컴퓨터는 storeLocations를 주석처리해서 사용할 수 있도록
+
 const storeLocations = {
     firstStore: { lat: 36.625688, lng: 127.465233 },
 };
@@ -689,8 +690,8 @@ app.get('/firstStore/admin', (req, res) => {
     });
 });
 
-server.listen(3023, () => {
-    console.log('웹소켓서버 실행 중 (3023포트)');
+server.listen(61422, () => {
+    console.log('웹소켓서버 실행 중 (61422 포트)');
 });
 
 //이제 서버컴퓨터에는 server.js에서 실행하며, 아래 코드는 server.js,backserver.js에서 app.js를 쓰기 위한 export설정임
