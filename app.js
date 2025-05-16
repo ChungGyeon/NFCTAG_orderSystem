@@ -3,8 +3,6 @@ const session = require('express-session');
 const mysql = require('mysql');
 const path = require('path');
 const multer  = require('multer');
-//const https = require('https');
-//const http = require('http');
 
 let testPageConnect = false; // db연결 안되면 자동으로 test.ejs열리게 설정
 //const upload = multer({ dest: 'test_img_upload/' }) //multer를 사용해 이미지 저장할 경로,테스트용임
@@ -30,6 +28,27 @@ const upload = multer({
 //30~44 line : 필요 변수 선언
 const bodyParser = require('body-parser');
 const app = express();
+
+//웹소켓 관련 32~50line
+const http = require('http');
+const socketIo = require('socket.io');
+
+const server = http.createServer(app);
+const io = socketIo(server, {
+    cors: {
+        origin: "http://localhost:3001", // 요청을 허용할 클라이언트 주소
+        methods: ["GET", "POST"]
+    }
+});
+
+io.on('connection', socket => {
+    console.log('클라이언트 접속됨');
+
+    socket.on('disconnect', () => {
+        console.log('클라이언트 연결 해제됨');
+    });
+});
+
 
 app.use(express.static('views'));
 app.set('view engine', 'ejs');
@@ -398,23 +417,28 @@ app.get('/getMenuOptions', (req, res) => {
 });
 
 //주문 완료 처리 401~417line
-app.post('/DoSendOrder', (req, res) => { 
-    const { menu, options, totalPrice, tableNum, storeID } = req.body;
+app.post('/DoSendOrder', (req, res) => {
+    const {menu, options, totalPrice, tableNum, storeID} = req.body;
     console.log('storeID 테스트 :', storeID); // 주문 정보 로그
     //storeID없으면 주문하는 가게가 없다는걸 알림
-    if(!storeID){return res.status(400).json({success: false, message: '죄송합니다 ㅠ \n주문하는 가게를 인식을 못했어요... 다시한번만 알려주시겠어요?'});}
-    else{
-    console.log('주문 완료:', menu, options, totalPrice,tableNum); // 주문 완료 로그
+    if (!storeID) {
+        return res.status(400).json({success: false, message: '죄송합니다 ㅠ \n주문하는 가게를 인식을 못했어요... 다시한번만 알려주시겠어요?'});
+    } else {
+        console.log('주문 완료:', menu, options, totalPrice, tableNum); // 주문 완료 로그
 
-    const order = { menu, options, totalPrice, tableNum };
+        const order = {menu, options, totalPrice, tableNum};
 
-    global.orders = global.orders || {};
-    global.orders[storeID] = global.orders[storeID] || [];
-    global.orders[storeID].push(order);
+        global.orders = global.orders || {};
+        global.orders[storeID] = global.orders[storeID] || [];
+        global.orders[storeID].push(order);
 
-    res.json({ success: true });
+        //웹소켓이 storeID에 대한 실시간 알림 전송
+        io.emit(`new-order-${storeID}`, order);
+
+        res.json({success: true});
     }
 });
+
 /*
 //파라메터 확인용 Dosendorder, db 연결을 통한 메뉴 저장하려고 했는데 개 빡세네
 app.post('/DoSendOrderTest', (req, res) => {
@@ -648,6 +672,9 @@ app.get('/firstStore/admin', (req, res) => {
     });
 });
 
+server.listen(3023, () => {
+    console.log('웹소켓서버 실행 중 (3023포트)');
+});
 
 //이제 서버컴퓨터에는 server.js에서 실행하며, 아래 코드는 server.js,backserver.js에서 app.js를 쓰기 위한 export설정임
 //테스트 환경은 backserver.jsfmf

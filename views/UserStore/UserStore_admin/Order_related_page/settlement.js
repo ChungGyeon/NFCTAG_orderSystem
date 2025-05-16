@@ -228,6 +228,42 @@ function oneTimeCalculateModalOpen() {
         });
 }
 
+//웹소켓 관련
+const storeID = document.getElementById("storeName").textContent.trim();
+const socket = io('http://localhost:3023');
+
+socket.on(`new-order-${storeID}`, (order) => {
+    console.log('새 주문 수신:', order);
+    renderNewOrder(order); // 새 주문을 DOM에 추가하는 함수
+});
+
+function renderNewOrder(order) {
+    const mainContent = document.getElementById('main-content');
+
+    const card = document.createElement('div');
+    card.className = 'table-card';
+    card.dataset.table = order.tableNum;
+    card.dataset.total = order.totalPrice;
+
+    card.innerHTML = `
+        <h3>테이블 ${order.tableNum}</h3>
+        <ul>
+            <li>
+                <h2>메뉴: ${order.menu}</h2>
+                <p>옵션: ${
+        Array.isArray(order.options)
+            ? order.options.map(o => o.name).join(', ')
+            : '선택 없음'
+    }</p>
+                <p>총 결제금액: ${order.totalPrice}원</p>
+            </li>
+        </ul>
+        <label><input type="checkbox" class="table-check"> 정산 대상 선택</label>
+    `;
+
+    mainContent.appendChild(card);
+}
+
 
 function closeModal() {
     document.getElementById("settle-modal").style.display = "none";
