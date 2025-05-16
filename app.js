@@ -10,19 +10,20 @@ let testPageConnect = false; // db연결 안되면 자동으로 test.ejs열리�
 //12~28 line : multer를 사용해 이미지 저장할 경로
 const upload = multer({  
     storage: multer.diskStorage({
-      	filename(req, file, done) {
-          	console.log(file);
-			done(null, file.originalname);
-        },
         //파일저장 위치 지정, file의 이름을 로그에 출력하고 test_img_upload파일에 이미지를 저장하게 될거야, 그래야만 해
-		destination(req, file, done) {
-      		console.log(file);
-		    done(null, path.join(__dirname, "test_img_upload/"));
-		    //17line 지금은 모든 상점이 같은 폴더를 공유하나, 이후 각 상점 이미지 폴저인 menu_img폴더로 옳길 방법을 찾아야해,
-		    //어디  상점 어드민인지, 거기서 쿼리 쏘면 그 경로로 오는 뭐라쓰는거냐 어쨋든 그런 방식이 필요해보임
-            //path.join(__dirname, "test_img_upload/") 이건 변수로도 선언이 가능하나 어차피 나중에 여러 상점 늘린다면 이걸로 쓸 수 밖에 없음
-	    },
-    }),
+        destination(req, file, done) {
+            console.log(file);
+            done(null, path.join(__dirname, "public/img/"));
+        },
+        filename(req, file, done) {
+            const ext = path.extname(file.originalname);
+            const basename = path.basename(file.originalname, ext);
+            const safeName = Buffer.from(basename, 'latin1').toString('utf8');
+            const uniqueSuffix = Date.now();
+            console.log(file);
+            done(null, `${safeName}-${uniqueSuffix}${ext}`);
+        }
+    })
 });
 
 //30~44 line : 필요 변수 선언
@@ -50,8 +51,9 @@ io.on('connection', socket => {
 });
 
 
-app.use(express.static('views'));
-app.set('view engine', 'ejs');
+//app.use(express.static('views'));
+app.use(express.static('public')); // 정적파일
+app.set('view engine', 'ejs'); //뷰 엔진 설정, 아우 헷갈려
 app.set('views', './views'); // 뷰 파일 디렉토리 설정
 app.use(bodyParser.urlencoded({ extended: true })); //url인코딩 데이터 파싱
 app.use(bodyParser.json()); // json 데이터 파싱
@@ -353,11 +355,16 @@ app.post('/upload', (req, res) => {
 //////////
 //menu_modify.ejs에서 이미지 선택 후 업로드 클릭 시 서버 로그에 파일 디테일을 출력함, 336~342line
 app.post('/StoreImg_upload', upload.single('myFile'), (req, res) => {
-    if (!req.file) {
-        return res.status(400).json({ error: "파일이 업로드되지 않았습니다." });
+    try{
+        if (!req.file) {
+            return res.status(400).json({ error: "파일이 업로드되지 않았습니다." });
+        }
+        //res.json({ filename: req.file.originalname });
+        res.redirect(`UserStore/UserStore_admin/Modifying_menu_page/UserStore_menu_modify?filename=${encodeURIComponent(req.file.originalname)}`);
+    } catch (error) {
+       console.error('이미지 업로드 중 에러 발생: ', err);
+       res.status(500).send('서버 에러');
     }
-    //res.json({ filename: req.file.originalname });
-    res.redirect(`UserStore/UserStore_admin/Modifying_menu_page/UserStore_menu_modify?filename=${encodeURIComponent(req.file.originalname)}`);
 });
 
 /*이미지 전송과, 메뉴 정보를 동시에 처리하는 로직, 혼자 도전해볼게 25/05/04 완성하긴 했다. 근데 위에 기본 메뉴추가 라우터랑 헷갈리니 주의할 것
@@ -400,7 +407,7 @@ app.post('/addToMenuInfo', upload.single('myFile'),(req, res) => {
 
 
 //클라이언트가 이미지를 요청할 때 사용할 경로를 추가, 보안에 주의요구됨
-app.use("/test_img_upload", express.static(path.join(__dirname, "test_img_upload/")));
+app.use("/public/img", express.static(path.join(__dirname, "public/img/")));
 
 // 손님이 메뉴를 선택시 추가옵션을 불러오는 코드, 386~398line
 app.get('/getMenuOptions', (req, res) => {

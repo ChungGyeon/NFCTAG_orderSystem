@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= storeID %>-TagOrder 관리자 페이지</title>
-  <link href="./allcss.css" rel="stylesheet">
+    <script>window.storeID = "<%= storeID %>";</script>
+    <script src="/js/UserStore_admin_main.js"></script>
+  <link href="/css/allcss.css" rel="stylesheet">
 </head>
 <body>
     <!--단순히 정산, 메뉴관리 이동 스크립트, GET방식으로 보냄, 관련 nodejs는 254~259-->
@@ -28,46 +30,5 @@
    </div>
 
     <!-- ✅ 위치 저장 스크립트 추가 -->
-    <script>
-        function saveStoreLocation() {
-            if (!navigator.geolocation) {
-                alert("브라우저가 위치 정보를 지원하지 않습니다.");
-                return;
-            }
-            const storeID = "<%= storeID %>";
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const lat = position.coords.latitude;
-                    const lng = position.coords.longitude;
-
-                    fetch('/saveStoreLocation2', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            lat: lat,
-                            lng: lng
-                        })
-                    })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                alert(`✅ 위치 저장 완료\n위도: ${lat}\n경도: ${lng}`);
-                            } else {
-                                alert("❌ 저장 실패: " + data.message);
-                            }
-                        })
-                        .catch(err => {
-                            console.error("🚫 서버 오류:", err);
-                            alert("서버 통신 오류 발생");
-                        });
-                },
-                (err) => {
-                    alert("위치 정보를 가져올 수 없습니다: " + err.message);
-                }
-            );
-        }
-    </script>
 </body>
 </html>
