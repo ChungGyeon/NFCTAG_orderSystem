@@ -698,6 +698,20 @@ app.get('/UserStore/UserStore_admin/UserStore_gnQR', (req, res) => {
     const store = req.session.storeID;
     res.render('./UserStore/UserStore_admin/UserStore_gnQR', {storeID: store});
 });
+//qr코드 생성 처리
+app.post('/generate', async (req, res) => {
+    const url = req.body.url;
+    try {
+        const qrDataUrl = await QRCode.toDataURL(url);
+        res.send(`
+      <p>입력한 주소: ${url}</p>
+      <img src="${qrDataUrl}" />
+      <br/><a href="/">다시 만들기</a>
+    `);
+    } catch (err) {
+        res.send('QR 코드 생성 실패');
+    }
+});
 
 //웹소켓 서버 오픈
 server.listen(3023, () => {

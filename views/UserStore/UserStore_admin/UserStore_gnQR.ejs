@@ -9,6 +9,11 @@
 <input type="text" id="numberInput" placeholder="예: 123">
 <button onclick="generateUrl()">URL 생성</button>
 
+<form action="/generate" method="post">
+    <input name="url" placeholder="주소를 입력하세요" required>
+    <button type="submit">QR 코드 생성</button>
+</form>
+
 <p id="result"></p>
 
 <script>
