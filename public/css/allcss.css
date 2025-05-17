@@ -54,7 +54,7 @@ button:hover {
 
 .grid-container { 
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2개의 열로 배치 */
+    grid-template-columns: repeat(3, 1fr); /* 2개의 열로 배치 */
     grid-gap: 50px;
 }
 .box {
