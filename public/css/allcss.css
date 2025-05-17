@@ -1,83 +1,85 @@
 body {
-    font-family: 'Nunito', sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
     margin: 0;
-    background-color: #e0f7fa;
-    color: #00796b;
-
+    padding: 0;
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #fff8f0;
+    color: #2c3e50;
 }
 
-
-.menu_container { /*메뉴 칸*/
-    text-align: center;
-    background-color: #ffffff;
-    width: 150px;
-    height: 300px;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease;
-}
-.menu_container:hover {
-    transform: scale(1.05);
-}
-h1 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    transition: opacity 0.5s ease;
-}
-.button-menu_container {
-    display: flex;
-    gap: 10px;
-}
-button {
-    padding: 12px 24px;
-    font-size: 16px;
-    color: #ffffff;
-    background-color: #e0f7fa;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
-button:hover {
-    background-color: #004d40;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-
-
-
-
-.grid-container { 
+/* 페이지 전체 그리드 정렬 */
+.grid-container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2개의 열로 배치 */
-    grid-gap: 50px;
-}
-.box {
-    border: 2px solid black;
-    width: 150px;
-    height: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    font-weight: 700;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 24px;
+    padding: 60px 40px;
+    max-width: 960px;
+    margin: 0 auto;
+    box-sizing: border-box;
 }
 
-
-/*menu에서 가져온거*/
-.menu-item {
-    display: inline-block;
+/* 인사 텍스트 */
+.grid-container p {
+    grid-column: 1 / -1;
     text-align: center;
-    margin: 15px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 20px;
 }
 
-.menu-item img {
-    width: 150px;
-    height: 150px;
+/* 메뉴 버튼 카드 스타일 */
+.menu_container {
+    background-color: #ffffff;
+    padding: 30px 20px;
+    border-radius: 16px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.menu_container:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+.menu_container button {
+    background-color: #f4a261;
+    border: none;
+    color: #fff;
+    padding: 14px 20px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 10px;
     cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.menu_container button:hover {
+    background-color: #e76f51;
+}
+
+.menu_container h2 {
+    margin: 0;
+    font-size: 1.3rem;
+}
+.admin-main-wrapper {
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    padding: 40px 30px;
+    max-width: 960px;
+    margin: 60px auto;
+    box-sizing: border-box;
+}
+
+/* 로고 중앙 정렬 */
+.logo-wrap {
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.logo {
+    width: 100px;
+    height: auto;
 }
