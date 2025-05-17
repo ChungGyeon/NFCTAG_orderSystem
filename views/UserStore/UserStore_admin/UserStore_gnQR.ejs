@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title><%= storeID %>-TagOrder 관리자 페이지</title>
+</head>
+<body>
+<h2>번호를 입력하세요</h2>
+<input type="text" id="numberInput" placeholder="예: 123">
+<button onclick="generateUrl()">URL 생성</button>
+
+<p id="result"></p>
+
+<script>
+    function generateUrl() {
+        const storeID='<%= storeID %>';
+        const baseUrl = "https://tagorder.duckdns.org/?storeID=" + storeID + "&tableNum=";
+        const inputNumber = document.getElementById("numberInput").value.trim();
+
+        // 유효성 검사 (숫자만 입력했는지 확인)
+        if (!inputNumber.match(/^\d+$/)) {
+            document.getElementById("result").textContent = "숫자만 입력해주세요.";
+            return;
+        }
+
+        const fullUrl = baseUrl + inputNumber;
+        document.getElementById("result").innerHTML = `완성된 URL: <a href="${fullUrl}" target="_blank">${fullUrl}</a>`;
+    }
+</script>
+</body>
+</html>

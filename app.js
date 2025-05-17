@@ -689,6 +689,16 @@ app.get('/firstStore/admin', (req, res) => {
     });
 });
 
+//qr코드 생성 페이지 이동
+app.get('/UserStore/UserStore_admin/UserStore_gnQR', (req, res) => {
+    if (!req.session.storeID) {
+        return res.redirect('/login');
+    }
+    const store = req.session.storeID;
+    res.render('./UserStore/UserStore_admin/UserStore_gnQR', {storeID: store});
+});
+
+//웹소켓 서버 오픈
 server.listen(3023, () => {
     console.log('웹소켓서버 실행 중 (3023포트)');
 });
