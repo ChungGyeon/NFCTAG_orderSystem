@@ -22,6 +22,8 @@ http.createServer((req, res) => {
   res.writeHead(301, { "Location": "https://" + req.headers.host + req.url });
   res.end();
 }).listen(80);
+
+
 const SubpoRt = 443;
 https.createServer(options, app).listen(SubpoRt, () => {
   console.log(`서버가 ${SubpoRt} 실행됩니다.`);
