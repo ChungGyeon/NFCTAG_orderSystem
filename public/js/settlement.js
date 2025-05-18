@@ -230,7 +230,7 @@ function oneTimeCalculateModalOpen() {
 
 //웹소켓 관련
 const storeID = document.getElementById("storeName").textContent.trim();
-const socket = io('http://tagorder.duckdns.org:61422');
+const socket = io('http://localhost:61422');
 
 socket.on(`new-order-${storeID}`, (order) => {
     console.log('새 주문 수신:', order);
