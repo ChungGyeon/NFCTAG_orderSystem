@@ -5,6 +5,7 @@ const path = require('path');
 const multer  = require('multer');
 const QRCode = require('qrcode');
 
+
 let testPageConnect = false; // db연결 안되면 자동으로 test.ejs열리게 설정
 //const upload = multer({ dest: 'test_img_upload/' }) //multer를 사용해 이미지 저장할 경로,테스트용임
 
@@ -32,13 +33,15 @@ const bodyParser = require('body-parser');
 const app = express();
 
 //웹소켓 관련 32~50line
+/*
 const http = require('http');
 const socketIo = require('socket.io');
 
 const server = http.createServer(app);
+
 const io = socketIo(server, {
     cors: {
-        origin: "http://localhost:3001", // 요청을 허용할 클라이언트 주소
+        origin: "http://tagorder.duckdns.org:61422", // 요청을 허용할 클라이언트 주소
         methods: ["GET", "POST"]
     }
 });
@@ -51,6 +54,7 @@ io.on('connection', socket => {
     });
 });
 
+*/
 
 //app.use(express.static('views'));
 app.use(express.static('public')); // 정적파일
@@ -67,6 +71,7 @@ app.use(session({ // 세션 설정
 
 //gps 설정 관련, gps라우터는  112 line부터
 //메모리 저장용 (기본 위치), 서버컴퓨터는 storeLocations를 주석처리해서 사용할 수 있도록
+
 const storeLocations = {
     firstStore: { lat: 36.625688, lng: 127.465233 },
 };
@@ -440,7 +445,8 @@ app.post('/DoSendOrder', (req, res) => {
         global.orders[storeID] = global.orders[storeID] || [];
         global.orders[storeID].push(order);
 
-        //웹소켓이 storeID에 대한 실시간 알림 전송
+        // io 가져와서 emit
+        const io = req.app.get('io');
         io.emit(`new-order-${storeID}`, order);
 
         res.json({success: true});
@@ -709,10 +715,11 @@ app.post('/generate', async (req, res) => {
     }
 });
 
+/*메인컴에는 웹소켓 서버 오픈을 server.js로
 //웹소켓 서버 오픈
 server.listen(61422, () => {
-    console.log('웹소켓서버 실행 중 (3023포트)');
-});
+    console.log('웹소켓서버 실행 중 (61422포트)');
+});*/
 
 //이제 서버컴퓨터에는 server.js에서 실행하며, 아래 코드는 server.js,backserver.js에서 app.js를 쓰기 위한 export설정임
 //테스트 환경은 backserver.jsfmf
