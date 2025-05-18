@@ -1,0 +1,113 @@
+/* 기본 레이아웃 설정 */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #fff8f0;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* 컨테이너 박스 */
+.container {
+    width: 90%;
+    max-width: 720px;
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
+    text-align: center;
+}
+
+/* 로고 */
+.logo-wrap {
+    margin-bottom: 20px;
+}
+.logo {
+    width: 120px;
+    height: auto;
+}
+
+/* 제목 */
+h1 {
+    font-size: 2rem;
+    margin-bottom: 16px;
+    color: #2c3e50;
+}
+
+/* 본문 설명 */
+p {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 24px;
+}
+
+/* 정보 블록 */
+.info-box, .features, .guide, .support {
+    margin-bottom: 30px;
+    text-align: left;
+}
+
+.info-box h3,
+.features h3,
+.guide h3,
+.support h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.info-box ul,
+.features ul,
+.support ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.info-box li::before,
+.features li::before {
+    content: '•';
+    color: #f28b82;
+    margin-right: 0.5em;
+}
+
+/* 가이드용 순서 리스트 */
+.guide ol {
+    padding-left: 1.2em;
+    margin: 0;
+}
+.guide li {
+    margin-bottom: 6px;
+}
+
+/* 버튼 그룹 */
+.btn-group {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+}
+.btn {
+    background-color: #f4a261;
+    color: white;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+.btn:hover {
+    background-color: #e76f51;
+}
+
+/* 푸터 */
+.footer {
+    margin-top: 40px;
+    font-size: 0.9rem;
+    color: #868e96;
+}

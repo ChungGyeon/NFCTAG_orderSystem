@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>태그오더 - 정통 충북대지점</title>
+  <link rel="stylesheet" href="/css/for_menu_modify.css">
+    <script src="/js/UserStore_menu_modify.js"></script>
+</head>
+<body>
+  <header class="header">
+    <div class="top-bar">
+    </div>
+      <div class="top-bar">
+          <img src="/img/NFC로고.png" alt="로고" class="top-logo">
+      </div>
+    <div class="store-info">
+      <!--<button class="back-btn">←</button>이거 어디쓸만하지않을까-->
+      <h1>정보통신공학부 충북대 지점</h1>
+      <div class="header-icons">
+        <button>🔗</button>
+        <button>🔍</button>
+        <button>🛒</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="menu-tabs">
+    <button>메뉴 찾기</button>
+    <button class="active">추천 메뉴</button>
+    <button>신메뉴</button>
+    <button>bhc 세트</button>
+    <button>뿌링클</button>
+    <p>버튼은 아직 작동 x</p>
+  </nav>
+
+  <main class="menu-list">
+    <section class="menu-item">
+      <div class="menu-info">
+        <% items.forEach(item => { %>
+          <!--<div class="menu-container" onclick="openModal(<%= item.id %>, '<%= item.name %>', '<%= item.price %>', '<%= item.description %>')">-->
+           <div class="menu-container" onclick="loadAdditonalMenu(<%= item.id %>, '<%= item.name %>', '<%= item.price %>', '<%= item.description %>')">
+            <div class="menu-details">
+            <!--아래 히든은 loadAdditionalMenu가 열어주는 페이지에게 주기 위한 거-->
+            <input type="hidden" name="id" value="<%= item.id %>">
+            <h2><%= item.name %></h2>
+            <p class="price"><%= item.price %>원</p>
+            <p class="review"><%= item.description %></p>
+            <form class="moding_menu_button_delete_label" action = '/admin_addel' method="POST" onsubmit="event.preventDefault(); openConfirmModal(this);">
+                    <input type="hidden" name="id" value="<%= item.id %>">
+                    <button class="moding_menu_delete_button" type="submit">삭제</button>
+            </form>
+          </div>
+            <img class="menu-img" src="/img/<%= item.image_url %>" alt="<%= item.name %>">
+          </div>
+        <% }) %>
+      </div>
+          <button class="confirm_menu_add" onclick="openAddMenuModal()"> 메뉴 추가하기 </button>
+    </section>
+
+  <!--메뉴 추가 섹션 : 이름,가격,설명,이미지 순으로 하나씩 모달이 나옴, 추후 js로 리펙토링 쌉가능-->
+   <div id="menu_add_section" class="menu-add-step">
+       <section>
+           <div id="menu-add-name" class="menu-add-modal">
+               <span class="close" onclick="closeAddMenuModal()">&times;</span>
+               <h2>메뉴 추가 - 첫번째!</h2><br>
+               <h3>추가할 메뉴의 이름을 입력해주세요!</h3><br>
+               <input type="text" id="menu-add-name-textarea" name="name" required><br>
+               <button class="confirm_menu_add--stepbutton" onclick="step2AddMenuModal()">다음</button>
+           </div>
+       </section>
+        <section>
+            <div id="menu-add-price" class="menu-add-step">
+                <span class="close" onclick="closeAddMenuModal()">&times;</span>
+                <h2>메뉴 추가 - 두번째!</h2><br>
+                <h3>메뉴의 가격을 정해주세요!</h3>
+                <input type="text" id="menu-add-price-textarea" name="price" required><br>
+                <button class="confirm_menu_add--stepbutton" onclick="step3AddMenuModal()">다음</button>
+            </div>
+        </section>
+
+        <section>
+            <div id="menu-add-description" class="menu-add-step">
+                 <span class="close" onclick="closeAddMenuModal()">&times;</span>
+                 <h2>메뉴 추가 - 세번째!</h2><br>
+                 <h3>손님들에게 메뉴의 설명이 필요해요!</h3>
+                 <input type="text" id="menu-add-description-textarea" name="description" required><br>
+                 <button class="confirm_menu_add--stepbutton" onclick="step4AddMenuModal()">다음</button>
+            </div>
+        </section>
+
+        <section>
+          <div id="menu-add-imgupload" class="menu-add-step">
+               <span class="close" onclick="closeAddMenuModal()">&times;</span>
+               <h1>메뉴 추가 - 마지막!</h1><br>
+               <h2>마지막으로 메뉴를 멋진 사진으로 꾸며볼까요?</h2><br>
+               <!--<form id="imge_UploadForm" action="/Storeimg_upload" method="POST" enctype="multipart/form-data"></form>-->
+                   <input type="file" name="myFile" id="imageInput" accept="image/*" onchange="previewImage()" />
+                   <input type="text" id="imageText" required readonly/>
+                   <div id="previewContainer" style="margin-top: 10px;">
+                       <img id="imagePreview" style="max-width: 300px; display: none;" />
+                       <p id="confirm-textPreview"></p>
+                   </div>
+                   <button type="button" id="previewButton" onclick="previewImage()">Preview</button>
+                   <button type="button" id="uploadButton" style="display: none;" onclick="uploadImage()">Upload to Server</button>
+
+                   <button class="confirm_menu_add--stepbutton" onclick="step5AddMenuModal()">마지막</button>
+               </form>
+          </div>
+        </section>
+
+       <section>
+           <div id="confirm_menu_add_process" class="menu-add-step">
+               <span class="close" onclick="closeAddMenuModal()">&times;</span>
+               <h1>확인해볼까요?</h1><br>
+               <div id="confirm-img" style="margin-top: 10px;">
+                   <img id="confirm-img-preview" style="max-width: 300px; display: none;" />
+                   <p id="textPreview"></p>
+               </div>
+
+               <h2>메뉴 이름 : <span id="menu-name-confirm-text"></span></h2>
+               <h2>메뉴 가격 : <span id="menu-price-confirm-text"></span></h2>
+               <h2>메뉴 설명 : <span id="menu-description-confirm-text"></span></h2>
+
+               <!-- 입력 필드 -->
+               <input type="hidden" id="menu-name-confirm-input" name="name">
+               <input type="hidden" id="menu-price-confirm-input" name="price">
+               <input type="hidden" id="menu-description-confirm-input" name="description">
+
+               <button class="confirm_menu_add--stepbutton" onclick="uploadMenu()">메뉴 추가</button>
+           </div>
+       </section>
+   </div>
+
+   <!--삭제 확인 모달, 관련 스크립 함수(openConfirmModal, closeConfirModal, confirmDelete)-->
+    <section>
+        <div id="confirmModal" class="confirm-modal">
+          <div class="confirm-modal-content">
+            <span class="close" onclick="closeConfirmModal()">&times;</span>
+               <p>정말로 삭제하겠습니까?</p>
+               <div class="confirm-modal-buttons">
+                 <button onclick="confirmDelete()">확인</button>
+                 <button onclick="closeConfirmModal()">취소</button>
+               </div>
+          </div>
+        </div>
+    </section>
+
+     <!--추가메뉴 관련 모달-->
+      <div id="additionalMenu_section" class="modal">
+       <section>
+        <div class="modal-content">
+          <span class="close" onclick="closeAddMenuModal();">&times;</span>
+          <h2 id="modal-menu-name"></h2>
+          <p id="modal-price"></p>
+          <p id="modal-description"></p>
+          <div id="modal-options"></div>
+          <input type="hidden" id="menu_id" required readonly/>
+          <button class="addToPlusMenu-button" onclick="openAdditionalMenuModal(document.getElementById('menu_id').value,document.getElementById('modal-menu-name').innerText,document.getElementById('modal-price').innerText)">
+              옵션 추가
+          </button>
+        </div>
+       </section>
+       <section>
+           <div id="additionalMenu_modal" class="additionalMenu_modal_section">
+               <!--이 x버튼은 특별히 전 단계로 돌아가는 것으로 만듦-->
+               <span class="close" onclick="document.getElementById('additionalMenu_modal').style.display = 'none';">&times;</span>
+               <!--추가메뉴 전송 템플릿, targetOfAdditionalMenu_id는 openAdditionalMenuModal()(366line)을 참조-->
+               <form id="option_imge_UploadForm" action="/test_adTooption" method="POST">
+                   <input type="hidden" name="targetOfAdditionalMenu_id" id="targetOfAdditionalMenu_id"/>
+                   <H2>선택한 메뉴 :</H2><H1 id="MenuName"></H1><br>
+                   <label for="name">설정할 옵션 이름:</label>
+                   <input type="text" id="name" name="name" required><br><br>
+                   <label for="additional_price">옵션 가격:</label>
+                   <input type="number" id="additional_price" name="additional_price" step="1" required><br><br>
+                   <label for="description">옵션 설명:</label>
+                   <textarea id="description" name="description" required></textarea><br><br>
+                   <button type="submit">Add Option</button>
+               </form>
+           </div>
+       </section>
+      </div>
+
+  </main>
+</body>
+</html>

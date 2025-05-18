@@ -1,0 +1,264 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Sans KR', Arial, sans-serif;
+    background-color: #fff8f0;
+    color: #333;
+}
+
+/* 상단 헤더 */
+.header {
+    border-bottom: 1px solid #ddd;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 15px;
+    background-color: #f9f9f9;
+}
+
+.top-logo {
+    height: 60px;
+    object-fit: contain;
+}
+
+/* 가게 정보 */
+.store-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    background-color: #f4a261;
+    color: #fff;
+}
+
+.store-info h1 {
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+.header-icons p {
+    margin: 2px 0;
+    font-size: 14px;
+}
+
+/* 메뉴 탭 */
+.menu-tabs {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding: 10px 16px;
+    background-color: #fffaf8;
+    border-bottom: 2px solid #eee;
+}
+
+.menu-tabs button {
+    padding: 8px 18px;
+    background-color: #f4a261;
+    border: none;
+    border-radius: 20px;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.menu-tabs button:hover {
+    background-color: #e76f51;
+}
+
+.menu-tabs .active {
+    background-color: #e76f51;
+}
+
+/* 메뉴 리스트 */
+.menu-list {
+    padding: 16px;
+}
+
+.menu-item {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+/* 카드형 메뉴 블록 */
+.menu-container {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    padding: 12px 16px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+}
+
+.menu-container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+.menu-details {
+    flex: 1;
+}
+
+.menu-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 6px;
+    margin-left: 16px;
+    object-fit: cover;
+}
+
+.menu-info h2 {
+    font-size: 18px;
+    margin-bottom: 5px;
+    color: #2c3e50;
+}
+
+.menu-info p {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.menu-info .price {
+    font-weight: bold;
+}
+
+.menu-info .review {
+    color: #666;
+}
+
+/* 삭제 버튼 */
+.moding_menu_delete_button {
+    background-color: #e76f51;
+    color: white;
+    font-weight: bold;
+    padding: 10px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.moding_menu_delete_button:hover {
+    background-color: #d94d3a;
+}
+
+/* 메뉴 추가 버튼 */
+.confirm_menu_add {
+    width: 100%;
+    background-color: #f4a261;
+    color: white;
+    font-weight: bold;
+    padding: 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.confirm_menu_add:hover {
+    background-color: #e76f51;
+}
+
+/* 옵션 수정 버튼 */
+.moding_menu_addiMenu_button {
+    background-color: #f4a261;
+    color: white;
+    font-weight: bold;
+    padding: 10px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.moding_menu_addiMenu_button:hover {
+    background-color: #e76f51;
+}
+
+/* 옵션 추가 버튼 */
+.addToPlusMenu-button {
+    background-color: #f4a261;
+    color: white;
+    font-weight: bold;
+    width: 100%;
+    height: 60px;
+    border-radius: 8px;
+    font-size: 16px;
+    border: none;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.addToPlusMenu-button:hover {
+    background-color: #e76f51;
+}
+
+/* input 공통 */
+input {
+    width: 100%;
+    max-width: 300px;
+    height: 40px;
+    font-size: 15px;
+    border: none;
+    border-radius: 15px;
+    padding-left: 10px;
+    outline: 2px solid #eee;
+}
+
+/* 모달 창 */
+.modal,
+.menu-add-step,
+.additionalMenu_modal_section,
+.confirm-modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 80%;
+    background-color: white;
+    overflow: auto;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+    animation: slide-up 0.5s ease-out;
+}
+
+.modal-content,
+.confirm-modal-content {
+    padding: 20px;
+}
+
+@keyframes slide-up {
+    from { bottom: -50%; }
+    to { bottom: 0; }
+}
+
+@keyframes slide-down {
+    from { top: -100%; }
+    to { top: 0; }
+}
+
+/* 모달 닫기 버튼 */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: black;
+}

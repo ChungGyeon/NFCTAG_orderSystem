@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>테스트 상점</title>
+  <link rel="stylesheet" href="/css/forMenulist.css">
+  <script src="/js/menulist.js"></script>
+</head>
+<body>
+  <header class="header">
+    <div class="top-bar">
+    </div>
+    <div class="top-bar">
+      <img src="/img/NFC로고.png" alt="로고" class="top-logo">
+    </div>
+    <div class="store-info">
+      <!--<button class="back-btn">←</button>이거 어디쓸만하지않을까-->
+      <h1>정보통신공학부 충북대 지점</h1>
+      <div class="header-icons">
+        <p>테이블 번호 : <%= tableNum %></p>
+        <p>어디 가게? : <%= storeID %></p>
+      </div>
+    </div>
+  </header>
+
+  <nav class="menu-tabs">
+    <button class="active">추천 메뉴</button>
+  </nav>
+
+  <main class="menu-list">
+    <section class="menu-item">
+      <div class="menu-info">
+        <% items.forEach(item => { %>
+          <div class="menu-container" onclick="openModal(<%= item.id %>, '<%= item.name %>', '<%= item.price %>', '<%= item.description %>')">
+            <div class="menu-details">
+            <h2><%= item.name %></h2>
+            <p class="price"><%= item.price %>원</p>
+            <p class="review"><%= item.description %></p>
+          </div>
+            <img class="menu-img" src="/img/<%= item.image_url %>" alt="<%= item.name %>">
+          </div>
+        <% }) %>
+      </div>
+    </section>
+    
+     <!--모달 관련 코드-->
+      <div id="myModal" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="closeModal()">&times;</span>
+          <h2 id="modal-menu-name"></h2>
+          <p id="modal-price"></p>
+          <p id="modal-description"></p>
+          <br>
+          <div id="modal-options"></div>
+          <br>
+          <button class="DoSendOrderButton" onclick="DoSendOrder()">주문 하기</button>
+        </div>
+      </div>
+
+    <!--
+    <section class="menu-item">
+      <div class="menu-info">
+        <h2>HOT후라이드</h2>
+        <p>명불허전 바삭함, 고소함 가득 매콤하게 튀긴...</p>
+        <p class="price">21,000원</p>
+        <p class="review">리뷰 23개</p>
+      </div>
+    </section>
+
+    <section class="menu-item">
+      <div class="menu-info">
+        <h2>HOT골드킹</h2>
+        <p>bhc만의 속성된 소스로 매콤, 달콤, 짭조름...</p>
+        <p class="price">21,000원</p>
+        <p class="review">리뷰 2개</p>
+      </div>
+    </section>
+
+    <section class="menu-item">
+      <div class="menu-info">
+        <h2>HOT골드킹 콤보</h2>
+        <p>[윙/봉/닭다리 5조각씩 제공] bhc만의 속성...</p>
+        <p class="price">24,000원</p>
+        <p class="review">리뷰 4개</p>
+      </div>
+    </section>
+    -->
+  </main>
+<script>
+  window.tableNum = <%- JSON.stringify(tableNum) %>;
+  window.storeID = <%- JSON.stringify(storeID) %>;
+</script>
+</body>
+</html>

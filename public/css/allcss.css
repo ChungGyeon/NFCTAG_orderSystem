@@ -1,0 +1,85 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #fff8f0;
+    color: #2c3e50;
+}
+
+/* 페이지 전체 그리드 정렬 */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 24px;
+    padding: 60px 40px;
+    max-width: 960px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+/* 인사 텍스트 */
+.grid-container p {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+/* 메뉴 버튼 카드 스타일 */
+.menu_container {
+    background-color: #ffffff;
+    padding: 30px 20px;
+    border-radius: 16px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.menu_container:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+.menu_container button {
+    background-color: #f4a261;
+    border: none;
+    color: #fff;
+    padding: 14px 20px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.menu_container button:hover {
+    background-color: #e76f51;
+}
+
+.menu_container h2 {
+    margin: 0;
+    font-size: 1.3rem;
+}
+.admin-main-wrapper {
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    padding: 40px 30px;
+    max-width: 960px;
+    margin: 60px auto;
+    box-sizing: border-box;
+}
+
+/* 로고 중앙 정렬 */
+.logo-wrap {
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.logo {
+    width: 100px;
+    height: auto;
+}
