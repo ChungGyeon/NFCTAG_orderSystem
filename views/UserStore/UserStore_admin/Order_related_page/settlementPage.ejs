@@ -11,7 +11,10 @@
 <body>
 <div class="test-container">
     <header>
-        <h1 id="storeName"><%= store %></h1>
+        <div class="header-wrap">
+            <img src="/img/NFC로고.png" alt="TagOrder 로고" class="header-logo">
+            <h1 id="storeName"><%= store %></h1>
+        </div>
     </header>
     <main id="main-content">
         <% orders.forEach(order => { %>

@@ -1,0 +1,64 @@
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #FFF8F0;
+    color: #2C3E50;
+    margin: 0;
+    padding: 40px;
+    text-align: center;
+}
+
+h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+input[type="text"] {
+    padding: 10px;
+    width: 250px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-bottom: 12px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #F4A261;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #E76F51;
+}
+
+#result {
+    margin-top: 30px;
+    font-size: 16px;
+}
+
+#result img {
+    margin-top: 15px;
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+a {
+    display: inline-block;
+    margin-top: 12px;
+    color: #2980B9;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: underline;
+}

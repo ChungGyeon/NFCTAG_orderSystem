@@ -6,25 +6,33 @@
     <link rel="stylesheet" href="/css/forRegister.css">
 </head>
 <body>
-<h1>가게 회원가입</h1>
+<div class="wrapper">
+    <div class="container">
+        <!-- 로고 추가 -->
+        <div class="logo-wrap">
+            <img src="/public/img/NFC로고.png" alt="TagOrder 로고" class="logo">
+        </div>
+        <form action="/register" method="POST">
+            <h1>가게 회원가입</h1>
 
-<form action="/register" method="POST">
-    <label for="store_name">가게 이름</label>
-    <input type="text" id="store_name" name="store_name" required>
+            <label for="username">아이디</label>
+            <input type="text" id="username" name="username" required>
 
-    <label for="phone_number">전화번호</label>
-    <input type="text" id="phone_number" name="phone_number">
+            <label for="password">비밀번호</label>
+            <input type="password" id="password" name="password" required>
 
-    <label for="address">주소</label>
-    <input type="text" id="address" name="address">
+            <label for="store_name">가게 이름</label>
+            <input type="text" id="store_name" name="store_name" required>
 
-    <label for="username">아이디</label>
-    <input type="text" id="username" name="username" required>
+            <label for="phone_number">전화번호</label>
+            <input type="text" id="phone_number" name="phone_number">
 
-    <label for="password">비밀번호</label>
-    <input type="password" id="password" name="password" required>
+            <label for="address">주소</label>
+            <input type="text" id="address" name="address">
 
-    <button type="submit">회원가입</button>
-</form>
+            <button type="submit">회원가입</button>
+        </form>
+    </div>
+</div>
 </body>
 </html>
