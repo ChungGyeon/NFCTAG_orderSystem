@@ -9,26 +9,29 @@
   <link href="/css/allcss.css" rel="stylesheet">
 </head>
 <body>
-    <!--단순히 정산, 메뉴관리 이동 스크립트, GET방식으로 보냄, 관련 nodejs는 254~259-->
-  <div class="grid-container">
-      <p>안녕하세요 <%= username %>님!</p>
-      <form class="menu_container" action="/UserStore/UserStore_admin/Order_related_page/settlementPage" method="GET">
-       <button type="submit">
-           <h2>정산 관리</h2>
-       </button>
-   </form>
-   <form class="menu_container" action="/UserStore/UserStore_admin/Modifying_menu_page/UserStore_menu_modify" method="GET">
-          <button type="submit">
-              <h2>메뉴 관리</h2>
-          </button>
-   </form>
-   <form class="menu_container" onsubmit="saveStoreLocation(); return false;">
-          <button type="submit">
-             <h2>가게 GPS 저장</h2>
-          </button>
-    </form>
-   </div>
-
-    <!-- ✅ 위치 저장 스크립트 추가 -->
+<!-- 전체를 감싸는 카드형 박스 -->
+<div class="admin-main-wrapper">
+    <!-- 로고 -->
+    <div class="logo-wrap">
+        <img src="/public/img/NFC로고.png" alt="TagOrder 로고" class="logo">
+    </div>
+    <!-- 관리자 기능 그리드 -->
+    <div class="grid-container">
+        <p>안녕하세요 <%= username %>님!</p>
+        <form class="menu_container" action="/UserStore/UserStore_admin/Order_related_page/settlementPage" method="GET">
+            <button type="submit"><h2>정산 관리</h2></button>
+        </form>
+        <form class="menu_container" action="/UserStore/UserStore_admin/Modifying_menu_page/UserStore_menu_modify" method="GET">
+            <button type="submit"><h2>메뉴 관리</h2></button>
+        </form>
+        <form class="menu_container" onsubmit="saveStoreLocation(); return false;">
+            <button type="submit"><h2>가게 GPS 저장</h2></button>
+        </form>
+        <form class="menu_container" action="/UserStore/UserStore_admin/UserStore_gnQR" method="GET">
+            <button type="submit"><h2>주문판 생성하러 가기</h2></button>
+        </form>
+    </div>
+</div>
 </body>
+
 </html>

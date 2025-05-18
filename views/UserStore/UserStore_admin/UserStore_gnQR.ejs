@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title><%= storeID %>-TagOrder 관리자 페이지</title>
+</head>
+<link rel="stylesheet" href="/css/forQRcode.css">
+<body>
+<h2>번호를 입력하세요</h2>
+<input type="text" id="numberInput" placeholder="예: 123">
+<button onclick="generateUrl()">URL 생성</button>
+
+<p id="result"></p>
+<script>
+    function generateUrl() {
+        const storeID='<%= storeID %>';
+        const baseUrl = "https://tagorder.duckdns.org/?storeID=" + storeID + "&tableNum=";
+        const inputNumber = document.getElementById("numberInput").value.trim();
+
+        // 유효성 검사 (숫자만 입력했는지 확인)
+        if (!inputNumber.match(/^\d+$/)) {
+            document.getElementById("result").textContent = "숫자만 입력해주세요.";
+            return;
+        }
+
+        const fullUrl = baseUrl + inputNumber;
+
+        fetch('/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json' //HTTP의 요청이 JSON형식임을 알리는 헤더
+            },
+
+            body: JSON.stringify({ url: fullUrl }) //JSON형식으로 바꿔서 body에 담음
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.qrDataUrl) {
+                    document.getElementById("result").innerHTML = `<p>입력한 주소: ${fullUrl}</p>
+                    <img src="${data.qrDataUrl}" />
+                    <br/><a href="/UserStore/UserStore_admin/UserStore_gnQR">다시 만들기</a>`;
+                } else {
+                    alert('죄송해요! 생성에 실패했습니다ㅠ\n 다시 시도해주시면 실패하지않을게요!');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('에러 발생');
+            });
+    }
+</script>
+</body>
+</html>

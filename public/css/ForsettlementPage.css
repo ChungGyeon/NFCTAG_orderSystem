@@ -40,25 +40,25 @@ aside {
 
 
 
- /*이 아래는 세부 요소들 css*/
- /* 이 버튼을 아래의 버튼으로 대체함
+/*이 아래는 세부 요소들 css*/
+/* 이 버튼을 아래의 버튼으로 대체함
 .settle-button {
-    display: block;
-    margin-top: 15px;
-    padding: 12px 20px;
-    background-color: #4CAF50;
-    color: white;
-    text-align: center;
-    text-decoration: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
+   display: block;
+   margin-top: 15px;
+   padding: 12px 20px;
+   background-color: #4CAF50;
+   color: white;
+   text-align: center;
+   text-decoration: none;
+   border-radius: 8px;
+   font-size: 16px;
+   font-weight: bold;
+   border: none;
+   cursor: pointer;
 }
 .settle-button:hover {
-    background-color: #388E3C;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+   background-color: #388E3C;
+   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }*/
 
 aside adjustment-button {
@@ -129,6 +129,7 @@ aside adjustment-button-cancelVer:hover {
     justify-content: center;
     font-size: 18px;
     margin-bottom: 20px;
+    text-align: center;
 }
 .one-time_calculate-buttons,
 .DeleteConfirmModal-buttons {
@@ -235,10 +236,12 @@ aside adjustment-button-caluelate-logVer:hover {
 }
 
 .close {
-    color: #aaa;
-    float: right;
+    align-self: flex-end;
     font-size: 28px;
     font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+    margin-bottom: 10px;
 }
 
 .close:hover,
@@ -269,4 +272,17 @@ aside adjustment-button-caluelate-logVer:hover {
     color: black;
     text-decoration: none;
     cursor: pointer;
+}
+/* 로고 + 상호명 수평 정렬 */
+.header-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+/* 로고 이미지 크기 */
+.header-logo {
+    height: 40px;
+    object-fit: contain;
 }
