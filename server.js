@@ -37,9 +37,18 @@ const io = socketIo(server, {
 });
 
 
-
-
 const SubpoRt = 443;
-https.createServer(options, app).listen(SubpoRt, () => {
+
+io.on('connection', socket => {
+  console.log('클라이언트 접속됨');
+  socket.on('disconnect', () => {
+    console.log('클라이언트 연결 해제됨');
+  });
+});
+
+// app에서 io 사용 가능하게 전달
+app.set('io', io);
+
+server.listen(SubpoRt, () => {
   console.log(`서버가 ${SubpoRt} 실행됩니다.`);
 });
