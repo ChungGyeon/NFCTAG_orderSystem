@@ -710,7 +710,7 @@ app.post('/generate', async (req, res) => {
 });
 
 //웹소켓 서버 오픈
-server.listen(3023, () => {
+server.listen(61422, () => {
     console.log('웹소켓서버 실행 중 (3023포트)');
 });
 
