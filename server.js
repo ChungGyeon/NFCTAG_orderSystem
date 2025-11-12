@@ -50,5 +50,13 @@ io.on('connection', socket => {
 app.set('io', io);
 
 server.listen(SubpoRt, () => {
-  console.log(`서버가 ${SubpoRt} 실행됩니다.`);
+    console.log(`서버가 ${SubpoRt} 실행됩니다.`);
+
+    try {
+        process.setgid('chunggyeon');
+        process.setuid('chunggyeon');
+        console.log("루트권한 포기 완료, 일반계정으로 실행 중");
+    } catch (err) {
+        console.log(`권한 포기 중 오류 발생 :  ${err.message}`);
+    }
 });
